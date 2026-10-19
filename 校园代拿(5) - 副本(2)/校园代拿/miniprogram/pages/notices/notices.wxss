@@ -1,0 +1,80 @@
+.notice-header {
+
+  margin-bottom: 12rpx;
+
+}
+
+
+
+.notice-title {
+
+  font-size: 32rpx;
+
+  font-weight: 600;
+
+  color: var(--text);
+
+  flex: 1;
+
+}
+
+
+
+.pin-tag {
+
+  flex-shrink: 0;
+
+}
+
+
+
+.notice-content {
+
+  font-size: 28rpx;
+
+  line-height: 1.7;
+
+  margin-bottom: 16rpx;
+
+  display: block;
+
+  color: var(--text);
+
+}
+
+
+
+.notice-time {
+
+  display: block;
+
+}
+
+
+
+.notice-empty::before {
+
+  width: 32rpx;
+
+  height: 40rpx;
+
+  border: 4rpx solid var(--subtext);
+
+  border-radius: 4rpx;
+
+  opacity: 0.3;
+
+}
+
+
+
+.notice-empty::after {
+
+  width: 20rpx;
+
+  height: 3rpx;
+
+  top: 72rpx;
+
+}
+

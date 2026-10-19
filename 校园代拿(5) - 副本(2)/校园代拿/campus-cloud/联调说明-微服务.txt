@@ -1,0 +1,30 @@
+校园代拿 — 微服务 + Nacos 联调
+
+一、两个地址别搞混（Nacos 3.2.1）
+  控制台（浏览器）：http://127.0.0.1:8081
+  服务注册（微服务配置）：127.0.0.1:8848
+  配置写在 campus-common/.../application-nacos.properties
+
+二、IDE 识别不到 Maven 模块时
+  1. 用 IDEA 打开目录：校园代拿（含根 pom.xml）或 campus-cloud
+  2. 右键根 pom.xml → Maven → Reload Project
+  3. 等待索引完成（右下角进度条到 100%）
+  4. 运行主类：com.campus.AuthServiceApplication 等
+
+三、启动微服务
+  start-all-microservices.bat 已不在仓库里。
+  日常：IDE 运行各主类（先保证 Nacos 8848 已起来）。
+  或在 campus-cloud 目录执行：powershell -File scripts\restart-all.ps1
+  deploy\启动微服务.bat 只编译并列出端口，不会启动进程。
+
+四、Nacos 里仍看不到服务
+  1. 控制台关闭「隐藏空服务」（右上角开关）
+  2. 命名空间选 public；配置里 namespace 必须为空，不能写 public
+  3. 本机 Nacos 3.2 默认开了鉴权，nacos/nacos 常注册失败：
+     双击 deploy/关闭Nacos鉴权并重启.bat 后，重启全部微服务
+  4. 日志里应出现 nacos registry / register finished；若 401 即鉴权未关
+  5. 确认各服务端口在监听：8080、8101-8106
+
+五、前端
+  frontend/.env.development：
+  VITE_API_ORIGIN=http://127.0.0.1:8080

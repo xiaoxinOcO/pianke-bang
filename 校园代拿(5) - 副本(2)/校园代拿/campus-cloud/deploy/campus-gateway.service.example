@@ -1,0 +1,45 @@
+# =============================================================================
+# 校园代拿 · campus-gateway systemd 单元（统一入口 8080，Nginx 反代目标）
+# =============================================================================
+# 与 Nginx、MySQL、中间件一起部署时请看同目录：云服部署说明.txt、nginx-campus.conf
+# 云服务器上复制为：/etc/systemd/system/campus-gateway.service
+#
+# 注意：网关之外还需启动 auth/user/task/audit/chat/wallet 六个业务服务，
+#       见 start-services.sh 或分别为各 jar 建 systemd 单元。
+#
+# --- 步骤 1：目录与 jar ---
+#   sudo mkdir -p /opt/campus/services
+#   cd campus-cloud && mvn -q -DskipTests package
+#   cp campus-gateway/target/campus-gateway-*.jar /opt/campus/services/campus-gateway.jar
+#   （其余服务 jar 同理，见 start-services.sh）
+#
+# --- 步骤 2：阿里云密钥 ---
+#   sudo cp aliyun.env.example /opt/campus/aliyun.env && sudo nano /opt/campus/aliyun.env
+#   sudo chmod 600 /opt/campus/aliyun.env
+#
+# --- 步骤 3：安装并启动 ---
+#   sudo cp campus-gateway.service.example /etc/systemd/system/campus-gateway.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now campus-gateway
+#
+# =============================================================================
+
+[Unit]
+Description=校园代拿 API 网关 (campus-gateway)
+After=network.target mysqld.service
+Wants=campus-auth.service campus-user.service campus-task.service campus-audit.service campus-chat.service campus-wallet.service
+
+[Service]
+Type=simple
+User=ecs-user
+WorkingDirectory=/opt/campus/services
+EnvironmentFile=-/opt/campus/aliyun.env
+Environment=NACOS_ADDR=127.0.0.1:8848
+
+ExecStart=/usr/bin/java -jar /opt/campus/services/campus-gateway.jar
+
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

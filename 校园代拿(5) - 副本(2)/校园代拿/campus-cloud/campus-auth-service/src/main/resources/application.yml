@@ -1,0 +1,16 @@
+server:
+  port: 8101
+  tomcat:
+    max-http-post-size: 10MB
+
+spring:
+  application:
+    name: campus-auth-service
+  config:
+    import: optional:classpath:application-campus-shared.yml
+  cloud:
+    sentinel:
+      transport:
+        port: 8720
+  flyway:
+    enabled: false

@@ -1,0 +1,148 @@
+.center-page {
+  min-height: 100vh;
+  background: #f2f4f7;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.hero {
+  background: linear-gradient(135deg, #fff4e6 0%, #ffe0cc 100%);
+  border-radius: 20rpx;
+  padding: 36rpx 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.hero.focus {
+  box-shadow: 0 0 0 4rpx rgba(230, 126, 34, 0.35);
+}
+
+.hero-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12rpx;
+}
+
+.hero-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.hero-tip {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.hero-btn {
+  margin-top: 28rpx;
+  background: #e67e22 !important;
+  color: #fff !important;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+  color: #1a1a1a;
+}
+
+.redeem-row {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.redeem-input {
+  flex: 1;
+  height: 72rpx;
+  background: #f5f6f8;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+}
+
+.redeem-btn {
+  margin: 0;
+  background: #07c160 !important;
+  color: #fff !important;
+  font-size: 26rpx;
+  border-radius: 12rpx;
+  padding: 0 28rpx;
+  line-height: 72rpx;
+  height: 72rpx;
+}
+
+.act-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.act-card.focus {
+  margin: 0 -16rpx;
+  padding: 20rpx 16rpx;
+  border-radius: 12rpx;
+  background: #fff8f0;
+  box-shadow: inset 0 0 0 2rpx rgba(230, 126, 34, 0.35);
+}
+
+.empty-tip {
+  display: block;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #999;
+}
+
+.act-card:last-child {
+  border-bottom: none;
+}
+
+.act-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.act-sub {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #888;
+}
+
+.act-btn {
+  margin: 0;
+  background: #e8f8ef !important;
+  color: #07c160 !important;
+}
+
+.act-tag {
+  font-size: 24rpx;
+  color: #e67e22;
+}
+
+.link-mine {
+  text-align: center;
+  padding: 24rpx;
+  color: #07c160;
+  font-size: 26rpx;
+}

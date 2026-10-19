@@ -1,0 +1,93 @@
+<!-- 我的任务：极简列表行 -->
+<view wx:if="{{compact}}" class="task-row" bindtap="onTap">
+  <view class="row-top">
+    <view class="row-title-wrap">
+      <view class="row-title-line">
+        <text class="row-title">{{task.title}}</text>
+        <text wx:if="{{urgentTag}}" class="urgent-chip compact">加急</text>
+      </view>
+      <text class="row-sub">{{typeLabel}} · {{timeAgo}} · {{personLabel}} {{personName}}</text>
+    </view>
+    <view class="row-side">
+      <text class="row-status {{statusCls}}">{{statusLabel}}</text>
+      <text class="row-price">¥{{rewardText}}</text>
+    </view>
+  </view>
+  <view class="row-route">
+    <view class="row-leg">
+      <view class="row-point pickup"></view>
+      <text class="row-addr">{{task.pickupLocation || '未填写取件点'}}</text>
+    </view>
+    <view class="row-leg">
+      <view class="row-point dropoff"></view>
+      <text class="row-addr">{{task.dropoffLocation || '未填写送达点'}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 大厅等：完整卡片 -->
+<view wx:else class="task-card type-{{typeBadgeCls}}" bindtap="onTap">
+  <view class="task-header">
+    <view class="header-main">
+      <view class="publisher-avatar-wrap">
+        <image
+          wx:if="{{publisherAvatar}}"
+          class="publisher-avatar-img"
+          src="{{publisherAvatar}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="publisher-avatar-fallback">{{publisherInitial}}</view>
+        <text class="type-corner {{typeBadgeCls}}">{{typeAbbr}}</text>
+      </view>
+      <view class="title-block">
+        <view class="title-line">
+          <text class="task-title">{{displayTitle}}</text>
+          <text wx:if="{{urgentOn}}" class="urgent-mark">加急</text>
+        </view>
+        <view class="meta-row">
+          <text class="type-chip">{{typeLabel}}</text>
+          <text class="meta-time">{{timeAgo}}</text>
+          <text wx:if="{{deadlineText}}" class="meta-deadline">截止 {{deadlineText}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="price-side">
+      <text class="reward-value">¥{{rewardText}}</text>
+      <text wx:if="{{urgentFeeText}}" class="urgent-fee">加急赏 +¥{{urgentFeeText}}</text>
+      <text class="status-badge {{statusCls}}">{{statusLabel}}</text>
+    </view>
+  </view>
+
+  <view class="summary-line">{{summaryLine}}</view>
+
+  <view class="route">
+    <view class="route-item">
+      <text class="route-tag pickup">取</text>
+      <view class="route-copy">
+        <text class="route-label">取件地点</text>
+        <text class="route-text">{{pickupText}}</text>
+      </view>
+    </view>
+    <view class="route-item">
+      <text class="route-tag dropoff">送</text>
+      <view class="route-copy">
+        <text class="route-label">送达地点</text>
+        <text class="route-text">{{dropoffText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{descText}}" class="desc-box">
+    <text class="desc-label">说明</text>
+    <text class="desc-text">{{descText}}</text>
+  </view>
+
+  <view class="task-footer">
+    <text class="footer-person">{{personLabel}} {{personName}}</text>
+    <text class="footer-hint">点击查看详情</text>
+  </view>
+
+  <view wx:if="{{showActions && task.status === 'OPEN'}}" class="action-row">
+    <button class="action-btn" hover-class="action-btn-hover" catchtap="onClaim">立即接单</button>
+  </view>
+</view>

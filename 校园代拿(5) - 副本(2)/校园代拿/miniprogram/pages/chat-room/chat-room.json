@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "聊天",
+  "navigationBarBackgroundColor": "#ededed",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#ebebeb",
+  "disableScroll": true,
+  "usingComponents": {
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

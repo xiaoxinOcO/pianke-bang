@@ -1,0 +1,45 @@
+.notify-toast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 12rpx);
+  left: 24rpx;
+  right: 24rpx;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: 24rpx 28rpx;
+  border-radius: 20rpx;
+  background: rgba(27, 36, 48, 0.92);
+  box-shadow: 0 12rpx 36rpx rgba(27, 36, 48, 0.24);
+  backdrop-filter: blur(8px);
+}
+
+.notify-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.notify-title {
+  display: block;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+}
+
+.notify-message {
+  display: block;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.notify-close {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 34rpx;
+  flex-shrink: 0;
+}

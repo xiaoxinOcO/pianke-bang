@@ -1,0 +1,86 @@
+<view class="page">
+  <notify-toast />
+  <view wx:if="{{isLoggedIn && user}}" class="user-card card">
+    <view class="avatar-wrap" bindtap="onChangeAvatar">
+      <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar">{{user.username[0]}}</view>
+      <view class="avatar-edit">
+        <text>{{uploadingAvatar ? '上传中' : '换头像'}}</text>
+      </view>
+    </view>
+    <view class="user-info">
+      <text class="username">{{user.username}}</text>
+      <text class="subtext">信誉分 {{user.creditScore || 80}}</text>
+      <view class="badge-row">
+        <text wx:if="{{avatarPending}}" class="tag pending-tag">头像审核中</text>
+        <text wx:if="{{user.riderApproved}}" class="tag rider-tag">认证接单员</text>
+        <text wx:elif="{{user.riderApplicationPending}}" class="tag pending-tag">审核中</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="user-card card guest" bindtap="goLogin">
+    <view class="guest-avatar"></view>
+    <text class="guest-text">登录 / 注册</text>
+    <text class="subtext">登录后可发布任务、接单和聊天</text>
+  </view>
+
+  <view class="menu card">
+    <view class="menu-item" bindtap="goMine">
+      <view class="menu-left">
+        <view class="menu-icon task">
+          <view class="mi-task"></view>
+        </view>
+        <text>我的任务</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goWallet">
+      <view class="menu-left">
+        <view class="menu-icon wallet">
+          <view class="mi-wallet"></view>
+        </view>
+        <text>我的钱包</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goCoupons">
+      <view class="menu-left">
+        <view class="menu-icon coupon">
+          <view class="mi-coupon"></view>
+        </view>
+        <text>优惠券</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goRiderApply">
+      <view class="menu-left">
+        <view class="menu-icon rider">
+          <view class="mi-rider"></view>
+        </view>
+        <text>申请接单员</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goNotices">
+      <view class="menu-left">
+        <view class="menu-icon notice">
+          <view class="mi-notice"></view>
+        </view>
+        <text>平台公告</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goFeedback">
+      <view class="menu-left">
+        <view class="menu-icon feedback">
+          <view class="mi-feedback"></view>
+        </view>
+        <text>意见反馈</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <button wx:if="{{isLoggedIn}}" class="btn-ghost logout-btn" bindtap="onLogout">退出登录</button>
+</view>

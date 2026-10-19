@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: campus-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: campus-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: unless-stopped
+
+  elasticsearch:
+    image: elasticsearch:7.7.1
+    container_name: campus-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: campus-nacos
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    restart: unless-stopped

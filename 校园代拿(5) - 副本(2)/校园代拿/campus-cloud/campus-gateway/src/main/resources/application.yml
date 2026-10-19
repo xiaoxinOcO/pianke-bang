@@ -1,0 +1,136 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: campus-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      timeout: 300ms
+  config:
+    import: optional:classpath:application-secret.yml,optional:classpath:application-nacos.properties,optional:classpath:application-sentinel.yml
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+  main:
+    web-application-type: reactive
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+      filter:
+        enabled: false
+      # 网关流控/熔断规则（dataId 与 Sentinel Dashboard Nacos 持久化一致）
+      datasource:
+        gw-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr:127.0.0.1:8848}
+            namespace: ${spring.cloud.nacos.discovery.namespace:}
+            groupId: SENTINEL_GROUP
+            dataId: ${spring.application.name}-gw-flow-rules
+            rule-type: gw-flow
+      scg:
+        fallback:
+          mode: response
+          response-status: 429
+          response-body: '{"success":false,"message":"请求过于频繁，请稍后再试"}'
+          content-type: application/json;charset=UTF-8
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Access-Control-Expose-Headers, RETAIN_FIRST
+      routes:
+        - id: campus-auth-service
+          uri: lb://campus-auth-service
+          predicates:
+            - Path=/api/auth/**
+        - id: campus-wallet-service-admin-credit
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/admin/users/*/wallet/**
+        - id: campus-wallet-service-admin-coupons
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/admin/coupons/**
+        - id: campus-wallet-service-admin-hall-activities
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/admin/hall-activities,/api/admin/hall-activities/**
+        - id: campus-wallet-service-hall-activities
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/hall-activities,/api/hall-activities/**
+        - id: campus-wallet-service-coupons
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/coupons/**
+        - id: campus-user-service
+          uri: lb://campus-user-service
+          predicates:
+            - Path=/api/admin/users/**,/api/admin/customer-service,/api/admin/customer-service/**
+        - id: campus-user-service-support-assign
+          uri: lb://campus-user-service
+          predicates:
+            - Path=/api/support/assign-agent,/api/support/agent-availability
+        - id: campus-audit-service-ai-config
+          uri: lb://campus-audit-service
+          predicates:
+            - Path=/api/admin/ai/config,/api/admin/ai/test
+        - id: campus-task-service-ai
+          uri: lb://campus-task-service
+          predicates:
+            - Path=/api/admin/ai/**
+        - id: campus-task-service-admin
+          uri: lb://campus-task-service
+          predicates:
+            - Path=/api/admin/tasks/**
+        - id: campus-task-service
+          uri: lb://campus-task-service
+          predicates:
+            - Path=/api/tasks/**
+        - id: campus-audit-service
+          uri: lb://campus-audit-service
+          predicates:
+            - Path=/api/admin/**
+        - id: campus-chat-service-api
+          uri: lb://campus-chat-service
+          predicates:
+            - Path=/api/chat/**
+        - id: campus-chat-service-ws
+          uri: lb:ws://campus-chat-service
+          predicates:
+            - Path=/ws/**
+        - id: campus-wallet-service-api
+          uri: lb://campus-wallet-service
+          predicates:
+            - Path=/api/wallet/**
+        - id: campus-audit-notices
+          uri: lb://campus-audit-service
+          predicates:
+            - Path=/api/notices/**,/api/system-messages/**,/api/feedback/**
+        - id: campus-audit-support
+          uri: lb://campus-audit-service
+          predicates:
+            - Path=/api/support/**
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:}
+    expiration-ms: 7200000
+  internal:
+    token: ${CAMPUS_INTERNAL_TOKEN:}
+
+campus:
+  gateway:
+    # 打进 jar 的默认值；URL 含冒号，勿写在 @Value 默认值里
+    auth-validate-base-url: "http://127.0.0.1:8101"
+    # validate-session 结果短缓存；登出/踢下线最多延迟这么久才生效
+    session-cache-ttl-seconds: 15
+    session-cache-enabled: true

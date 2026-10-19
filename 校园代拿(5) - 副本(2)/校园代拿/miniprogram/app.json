@@ -1,0 +1,65 @@
+{
+  "pages": [
+    "pages/hall/hall",
+    "pages/publish/publish",
+    "pages/chat/chat",
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/scan-login/scan-login",
+    "pages/forgot-password/forgot-password",
+    "pages/task-detail/task-detail",
+    "pages/mine/mine",
+    "pages/wallet/wallet",
+    "pages/coupons/coupons",
+    "pages/coupon-center/coupon-center",
+    "pages/chat-room/chat-room",
+    "pages/notices/notices",
+    "pages/system-notice/system-notice",
+    "pages/feedback/feedback",
+    "pages/rider-apply/rider-apply"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#07c160",
+    "navigationBarTitleText": "片刻帮",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f2f4f7",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#94a3b8",
+    "selectedColor": "#07c160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/hall/hall",
+        "text": "大厅"
+      },
+      {
+        "pagePath": "pages/publish/publish",
+        "text": "发布"
+      },
+      {
+        "pagePath": "pages/chat/chat",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于选择取件和送达地点"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation"
+  ],
+  "__usePrivacyCheck__": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

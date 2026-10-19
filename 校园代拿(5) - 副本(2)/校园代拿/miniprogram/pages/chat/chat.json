@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "消息",
+  "navigationBarBackgroundColor": "#ededed",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#ededed",
+  "usingComponents": {
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

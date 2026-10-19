@@ -1,0 +1,37 @@
+# Sentinel 控制台与客户端公共配置（各服务在 application.yml 中设置 transport.port 避免端口冲突）
+spring:
+  cloud:
+    sentinel:
+      enabled: true
+      # 启动即连接 Dashboard，便于在控制台看到服务
+      eager: true
+      transport:
+        dashboard: 127.0.0.1:8858
+      # Servlet 微服务启用 Filter；网关请在自身 application.yml 中关闭 filter.enabled
+      filter:
+        enabled: true
+      # 规则持久化到 Nacos（重启 Dashboard 不丢规则；与控制台 Nacos 推送 dataId 一致）
+      datasource:
+        flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr:127.0.0.1:8848}
+            namespace: ${spring.cloud.nacos.discovery.namespace:}
+            groupId: SENTINEL_GROUP
+            dataId: ${spring.application.name}-flow-rules
+            rule-type: flow
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr:127.0.0.1:8848}
+            namespace: ${spring.cloud.nacos.discovery.namespace:}
+            groupId: SENTINEL_GROUP
+            dataId: ${spring.application.name}-degrade-rules
+            rule-type: degrade
+
+# Feign 调用纳入 Sentinel 资源管理，配合 @FeignClient(fallback=...) 实现熔断降级
+feign:
+  sentinel:
+    enabled: true
+
+logging:
+  level:
+    com.alibaba.csp.sentinel: INFO

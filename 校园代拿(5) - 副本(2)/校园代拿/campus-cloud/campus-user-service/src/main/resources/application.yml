@@ -1,0 +1,22 @@
+server:
+  port: 8102
+  tomcat:
+    max-http-post-size: 10MB
+
+spring:
+  application:
+    name: campus-user-service
+  config:
+    import: optional:classpath:application-campus-shared.yml,optional:classpath:application-rabbitmq.yml
+  cloud:
+    sentinel:
+      transport:
+        port: 8721
+  flyway:
+    enabled: false
+
+campus:
+  remote:
+    audit-log: true
+
+

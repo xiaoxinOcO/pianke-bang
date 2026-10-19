@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>片刻帮 · 同类项目风格对照</title>
+  <style>
+    :root {
+      --ink: #1a1814;
+      --muted: #6b6560;
+      --line: rgba(26, 24, 20, 0.12);
+      --bg: #f3efe8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .lead {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 62ch;
+    }
+    .lead a { color: #8f3d14; }
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+    @media (min-width: 820px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-head {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-head .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .card-head h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+    .card-head p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .preview {
+      padding: 16px 18px 18px;
+      flex: 1;
+      min-height: 168px;
+    }
+    .swatches {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .links {
+      padding: 0 18px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .links a {
+      font-size: 12px;
+      color: #2f6f62;
+      text-decoration: none;
+      border: 1px solid rgba(47, 111, 98, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3faf8;
+    }
+    .links a:hover { background: #e5f3ef; }
+
+    /* —— 各风格迷你示意：只画「四个指标卡」 —— */
+    .demo-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .demo-stats .s {
+      padding: 10px 11px;
+      font-size: 11px;
+    }
+    .demo-stats .s b {
+      display: block;
+      font-size: 20px;
+      margin: 4px 0 2px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .demo-stats .s span { color: inherit; opacity: 0.65; }
+
+    /* A 闲鱼黄 */
+    .style-xianyu .preview { background: #fff8e6; }
+    .style-xianyu .s {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #f0e2b8;
+    }
+    .style-xianyu .s b { color: #111; }
+    .style-xianyu .s:nth-child(1) b { color: #ff6200; }
+
+    /* B 暖纸校园（贴近你们现状，但指标更克制） */
+    .style-paper .preview { background: #f6f2ea; }
+    .style-paper .s {
+      background: #fffcf7;
+      border-radius: 14px;
+      border: 1px solid rgba(20,18,11,.1);
+      box-shadow: 0 6px 18px rgba(20,18,11,.05);
+    }
+    .style-paper .s b { font-family: Georgia, "Noto Serif SC", serif; color: #14120b; }
+
+    /* C 蓝绿效率 */
+    .style-utility .preview { background: #f0f4f8; }
+    .style-utility .s {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #d7e0ea;
+    }
+    .style-utility .s b { color: #1e3a5f; font-variant-numeric: tabular-nums; }
+    .style-utility .s:first-child { border-left: 3px solid #2b6cb0; }
+
+    /* D 一行数字条（很多校园原型的做法） */
+    .style-strip .preview { background: #faf8f5; }
+    .style-strip .demo-stats {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: #fff;
+      border: 1px solid #e1e5df;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .style-strip .s {
+      padding: 14px 8px;
+      text-align: center;
+      border-right: 1px solid #e8ebe6;
+      border-radius: 0;
+      background: transparent;
+    }
+    .style-strip .s:last-child { border-right: 0; }
+    .style-strip .s b { font-size: 18px; color: #3c4a42; }
+    .style-strip .s span { font-size: 10px; color: #6b7a72; }
+
+    /* E 列表优先：弱化统计 */
+    .style-listfirst .preview { background: #f5f5f5; }
+    .style-listfirst .demo-stats { display: none; }
+    .style-listfirst .taskish {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e5e5e5;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .style-listfirst .taskish strong { font-size: 13px; }
+    .style-listfirst .taskish em {
+      font-style: normal;
+      color: #e85d04;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .style-listfirst .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .pick {
+      margin-top: 28px;
+      padding: 18px 20px;
+      background: #fff;
+      border: 1px dashed rgba(20,18,11,.2);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .pick strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>同类项目风格对照</h1>
+    <p class="lead">
+      按「校园跑腿 / 代拿 / 互助接单」真实产品与设计稿归纳的 5 种常见方向。
+      下面每块都用<strong>四个指标区</strong>示意（对应你首页右侧那组卡）。点开链接可看原作。
+    </p>
+
+    <div class="grid">
+      <!-- A -->
+      <article class="card style-xianyu">
+        <div class="card-head">
+          <div class="tag">A · 交易感</div>
+          <h2>闲鱼黄 / 跑腿交易风</h2>
+          <p>强搜索、强价格、黄橙主色。指标像「成交数字」，不是粉彩胶囊。</p>
+          <div class="swatches">
+            <i class="swatch" style="background:#ffe822"></i>
+            <i class="swatch" style="background:#ff6200"></i>
+            <i class="swatch" style="background:#111"></i>
+            <i class="swatch" style="background:#fff"></i>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="demo-stats">
+            <div class="s">今日新任务<b>12</b><span>待接火热</span></div>
+            <div class="s">均时长<b>42分</b><span>轻量为主</span></div>
+            <div class="s">完成率<b>96%</b><span>近30天</span></div>
+            <div class="s">天气<b>28°</b><span>适合跑腿</span></div>
+          </div>
+        </div>
+        <div class="links">
+          <a href="https://www.zcool.com.cn/work/ZMjkxNzA3MDA=.html" target="_blank" rel="noopener">站酷·闲鱼跑腿</a>
+          <a href="https://www.woshipm.com/evaluating/2747394.html" target="_blank" rel="noopener">闲鱼产品界面分析</a>
+        </div>
+      </article>
+
+      <!-- B -->
+      <article class="card style-paper">
+        <div class="card-head">
+          <div class="tag">B · 校园纸感</div>
+          <h2>暖纸轻简（贴近片刻帮现状）</h2>
+          <p>米纸底 + 白卡 + 柔和阴影。指标同款白卡即可，不必四色渐变。</p>
+          <div class="swatches">
+            <i class="swatch" style="background:#f6f2ea"></i>
+            <i class="swatch" style="background:#fffcf7"></i>
+            <i class="swatch" style="background:#c45c26"></i>
+            <i class="swatch" style="background:#2f6f62"></i>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="demo-stats">
+            <div class="s">今日新任务<b>0</b><span>暂无待接</span></div>
+            <div class="s">平均完成时长<b>42分</b><span>轻量任务</span></div>
+            <div class="s">完成率<b>—</b><span>近30天</span></div>
+            <div class="s">校园天气<b>28°</b><span>晴 · 适合跑腿</span></div>
+          </div>
+        </div>
+        <div class="links">
+          <a href="https://www.pm-ai.cn/share/detail/prototype/1218570" target="_blank" rel="noopener">PMAI·暖色轻简用户中心</a>
+          <a href="https://www.zcool.com.cn/work/ZNzA2OTQ4Mjg=.html" target="_blank" rel="noopener">站酷·校园速达</a>
+        </div>
+      </article>
+
+      <!-- C -->
+      <article class="card style-utility">
+        <div class="card-head">
+          <div class="tag">C · 效率工具</div>
+          <h2>蓝灰工具风</h2>
+          <p>偏快递/众包后台感：细边框、直角一点、数字对齐，不靠渐变区分。</p>
+          <div class="swatches">
+            <i class="swatch" style="background:#f0f4f8"></i>
+            <i class="swatch" style="background:#fff"></i>
+            <i class="swatch" style="background:#2b6cb0"></i>
+            <i class="swatch" style="background:#1e3a5f"></i>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="demo-stats">
+            <div class="s">今日新任务<b>0</b><span>暂无待接</span></div>
+            <div class="s">平均完成时长<b>42</b><span>分钟</span></div>
+            <div class="s">完成率<b>—</b><span>近30天</span></div>
+            <div class="s">校园天气<b>28°C</b><span>晴</span></div>
+          </div>
+        </div>
+        <div class="links">
+          <a href="https://github.com/Ikeu-1030/iRun" target="_blank" rel="noopener">GitHub·iRun 校园跑腿截图</a>
+          <a href="https://www.jztxt.com/t/pvec/" target="_blank" rel="noopener">校园代拿小程序截图</a>
+        </div>
+      </article>
+
+      <!-- D -->
+      <article class="card style-strip">
+        <div class="card-head">
+          <div class="tag">D · 最常见</div>
+          <h2>一行数字条</h2>
+          <p>很多校园跑腿落地页/原型把指标做成<strong>一排 3～4 个数字</strong>，不做 2×2 小卡。</p>
+          <div class="swatches">
+            <i class="swatch" style="background:#faf8f5"></i>
+            <i class="swatch" style="background:#fff"></i>
+            <i class="swatch" style="background:#7d8f86"></i>
+            <i class="swatch" style="background:#c79b7c"></i>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="demo-stats">
+            <div class="s"><b>0</b><span>今日新任务</span></div>
+            <div class="s"><b>42分</b><span>均时长</span></div>
+            <div class="s"><b>—</b><span>完成率</span></div>
+            <div class="s"><b>28°</b><span>校园天气</span></div>
+          </div>
+        </div>
+        <div class="links">
+          <a href="https://www.pmai.pro/share/detail/prototype/1186679" target="_blank" rel="noopener">PMAI·校园跑腿首页原型</a>
+        </div>
+      </article>
+
+      <!-- E -->
+      <article class="card style-listfirst" style="grid-column: 1 / -1;">
+        <div class="card-head">
+          <div class="tag">E · 列表优先</div>
+          <h2>弱化统计，任务卡当主角</h2>
+          <p>真机代拿小程序常见做法：首页几乎不放仪表盘，直接「酬劳 + 地点 + 状态」列表。</p>
+        </div>
+        <div class="preview">
+          <div class="taskish"><strong>南门驿站 · 代取两件</strong><em>¥8</em></div>
+          <div class="taskish"><strong>一食堂 · 代买简餐</strong><em>¥5</em></div>
+          <div class="taskish"><strong>图书馆 · 打印装订</strong><em>¥6</em></div>
+          <p class="hint">统计可以收到「我的 / 骑手面板」，首页让位给可接任务。</p>
+        </div>
+        <div class="links">
+          <a href="https://www.jztxt.com/t/pvec/" target="_blank" rel="noopener">校园代拿系统截图</a>
+          <a href="https://github.com/Ikeu-1030/iRun" target="_blank" rel="noopener">iRun 任务大厅</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="pick">
+      <strong>怎么选：</strong>回我一个字母（A～E），或「A 的颜色 + D 的布局」这种组合。
+      我只改 <code>frontend-wide-preview</code> 里那组指标卡/相关区域。
+    </div>
+  </div>
+</body>
+</html>

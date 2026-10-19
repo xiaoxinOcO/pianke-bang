@@ -1,0 +1,45 @@
+<view class="wallet-page">
+  <view class="balance-card">
+    <text class="balance-label">账户余额（元）· {{username}}</text>
+    <text class="balance-value">{{balance}}</text>
+    <text class="balance-sub">累计收入 ¥{{totalIncome}}</text>
+    <view class="action-row">
+      <button class="action-btn primary" bindtap="onSyncRecharge" loading="{{syncing}}" disabled="{{syncing}}">
+        同步充值
+      </button>
+      <button class="action-btn ghost" bindtap="onWithdraw">申请提现</button>
+    </view>
+  </view>
+
+  <view class="tip-card">
+    <text class="tip-title">充值说明</text>
+    <text class="tip-text">1. 支付宝沙箱充值需在网页端「我的钱包」完成支付</text>
+    <text class="tip-text">2. 支付成功后，点上方「同步充值」才会入账（沙箱回调不能自动到账）</text>
+    <text class="tip-text">3. 管理后台充值后，请下拉刷新本页；顶部须显示同一用户名</text>
+  </view>
+
+  <text class="section-title">交易流水</text>
+
+  <block wx:if="{{transactions.length > 0}}">
+    <view wx:for="{{transactions}}" wx:key="id" class="tx-item">
+      <view class="tx-head">
+        <text class="tx-type">{{item.type}}</text>
+        <text class="tx-amount {{item.amount >= 0 ? 'income' : 'expense'}}">
+          {{item.amount >= 0 ? '+' : ''}}{{item.amountText}}
+        </text>
+      </view>
+      <text class="tx-remark">{{item.remark || ''}}</text>
+      <text class="tx-time">{{item.timeText}}</text>
+    </view>
+  </block>
+
+  <view wx:elif="{{!loading}}" class="empty-wrap">
+    <view class="empty-illustration wallet-empty"></view>
+    <text class="empty-title">暂无流水记录</text>
+    <text class="empty-desc">充值或接单收入会显示在这里</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <text class="loading-dots">加载中</text>
+  </view>
+</view>

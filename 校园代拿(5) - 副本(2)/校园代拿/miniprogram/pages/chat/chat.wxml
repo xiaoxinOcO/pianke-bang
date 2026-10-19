@@ -1,0 +1,77 @@
+<view class="chat-list-page">
+  <notify-toast />
+
+  <view wx:if="{{!isLoggedIn}}" class="empty-wrap" bindtap="goLogin">
+    <view class="empty-illustration chat-empty"></view>
+    <text class="empty-title">登录后查看消息</text>
+    <text class="empty-desc">与任务发布方或接单员实时沟通</text>
+    <button class="btn-primary login-btn" catchtap="goLogin">去登录</button>
+  </view>
+
+  <block wx:else>
+    <view class="msg-toolbar">
+      <text class="msg-toolbar-hint">{{hasUnread ? '有未读消息' : '消息已全部读完'}}</text>
+      <view
+        class="msg-toolbar-btn {{!hasUnread || markingRead ? 'disabled' : ''}}"
+        hover-class="msg-toolbar-btn-hover"
+        bindtap="onMarkAllRead"
+      >{{markingRead ? '处理中…' : '全部已读'}}</view>
+    </view>
+
+    <view class="session-list">
+      <view class="session-item" bindtap="openSystemNotice" hover-class="session-item-hover">
+        <view class="avatar-wrap">
+          <view class="avatar system-avatar">系</view>
+        </view>
+        <view class="session-main">
+          <view class="session-top">
+            <text class="session-name">{{systemNotice.displayName}}</text>
+            <text wx:if="{{systemNotice.timeText}}" class="session-time">{{systemNotice.timeText}}</text>
+          </view>
+          <view class="session-bottom">
+            <text class="session-preview">{{systemNotice.contactPreview}}</text>
+            <view wx:if="{{systemNotice.unread > 0}}" class="unread-badge">
+              {{systemNotice.unread > 99 ? '99+' : systemNotice.unread}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view
+        wx:for="{{contacts}}"
+        wx:key="username"
+        class="session-item"
+        data-username="{{item.username}}"
+        bindtap="openChat"
+        hover-class="session-item-hover"
+      >
+        <view class="avatar-wrap">
+          <image
+            wx:if="{{item.avatarUrl}}"
+            class="avatar-img"
+            src="{{item.avatarUrl}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="avatar">{{item.avatarInitial}}</view>
+        </view>
+        <view class="session-main">
+          <view class="session-top">
+            <text class="session-name">{{item.displayName || item.username}}</text>
+            <text wx:if="{{item.timeText}}" class="session-time">{{item.timeText}}</text>
+          </view>
+          <view class="session-bottom">
+            <text class="session-preview">{{item.contactPreview || '暂无消息'}}</text>
+            <view wx:if="{{item.unread > 0}}" class="unread-badge">
+              {{item.unread > 99 ? '99+' : item.unread}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{contacts.length === 0 && !loading}}" class="list-empty">
+      <text class="list-empty-text">暂无聊天会话</text>
+      <text class="list-empty-desc">接单或发布任务后会自动创建</text>
+    </view>
+  </block>
+</view>

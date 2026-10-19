@@ -1,0 +1,341 @@
+<view class="detail-page" wx:if="{{task}}">
+  <notify-toast />
+
+  <!-- 彩色头图区 -->
+  <view class="banner">
+    <view class="banner-glow"></view>
+    <view class="banner-row">
+      <view class="banner-thumb {{typeBadgeCls}}">
+        <view wx:if="{{typeBadgeCls === 'express'}}" class="ti ti-express">
+          <view class="ti-pkg">
+            <view class="ti-pkg-top"></view>
+            <view class="ti-pkg-front">
+              <view class="ti-pkg-tape-v"></view>
+              <view class="ti-pkg-tape-h"></view>
+            </view>
+            <view class="ti-pkg-tag"></view>
+          </view>
+        </view>
+        <view wx:elif="{{typeBadgeCls === 'food'}}" class="ti ti-food">
+          <view class="ti-steam s1"></view>
+          <view class="ti-steam s2"></view>
+          <view class="ti-steam s3"></view>
+          <view class="ti-bowl-lid"></view>
+          <view class="ti-bowl"></view>
+        </view>
+        <view wx:elif="{{typeBadgeCls === 'print'}}" class="ti ti-print">
+          <view class="ti-doc">
+            <view class="ti-doc-fold"></view>
+            <view class="ti-doc-line l1"></view>
+            <view class="ti-doc-line l2"></view>
+            <view class="ti-doc-line l3"></view>
+          </view>
+        </view>
+        <view wx:elif="{{typeBadgeCls === 'queue'}}" class="ti ti-queue">
+          <view class="ti-person-head"></view>
+          <view class="ti-person-body"></view>
+          <view class="ti-ticket">
+            <text class="ti-ticket-n">1</text>
+          </view>
+        </view>
+        <view wx:else class="ti ti-other">
+          <view class="ti-spark a"></view>
+          <view class="ti-spark b"></view>
+          <view class="ti-spark c"></view>
+        </view>
+      </view>
+      <view class="banner-main">
+        <text class="banner-title">{{task.title}}</text>
+        <view class="banner-tags">
+          <text class="chip">{{typeLabel}}</text>
+          <text wx:if="{{urgentTag}}" class="chip urgent">{{urgentTag}}</text>
+          <text class="chip soft">#{{task.id}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="status-pill {{statusCls}}">
+      <view class="status-dot"></view>
+      <text>{{statusLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 浮动赏金卡 -->
+  <view class="float-card">
+    <view class="money-block">
+      <text class="money-label">任务赏金</text>
+      <view class="money-row">
+        <text class="money-yen">¥</text>
+        <text class="money-num">{{rewardText}}</text>
+      </view>
+      <view wx:if="{{urgentBonusText}}" class="urgent-bonus-row">
+        <text class="urgent-bonus-label">加急赏</text>
+        <text class="urgent-bonus-value">+¥{{urgentBonusText}}</text>
+      </view>
+    </view>
+    <view class="divider-v"></view>
+    <view class="time-block">
+      <text class="money-label">发布时间</text>
+      <text class="time-val">{{createdText}}</text>
+    </view>
+  </view>
+
+  <!-- 进度条 -->
+  <view class="card steps-card">
+    <view class="steps">
+      <view
+        wx:for="{{steps}}"
+        wx:key="key"
+        class="step {{item.done ? 'done' : ''}} {{item.current ? 'current' : ''}}"
+      >
+        <view class="step-node">
+          <view class="step-circle">{{item.done ? '✓' : index + 1}}</view>
+          <view wx:if="{{index < steps.length - 1}}" class="step-line {{item.done ? 'on' : ''}}"></view>
+        </view>
+        <text class="step-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 路线卡 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-icon ic-route"></view>
+      <text class="card-title">路线信息</text>
+    </view>
+    <view class="route-map">
+      <view class="route-item">
+        <view class="route-badge pickup">取</view>
+        <view class="route-text">
+          <text class="route-label">取件地点</text>
+          <text class="route-addr">{{task.pickupLocation || '未填写'}}</text>
+        </view>
+      </view>
+      <view class="route-connector">
+        <view class="dash"></view>
+        <view class="pin"></view>
+        <view class="dash"></view>
+      </view>
+      <view class="route-item">
+        <view class="route-badge dropoff">送</view>
+        <view class="route-text">
+          <text class="route-label">送达地点</text>
+          <text class="route-addr">{{task.dropoffLocation || '未填写'}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{deadlineText}}" class="deadline-bar">
+      <view class="clock"></view>
+      <text class="deadline-label">最晚送达</text>
+      <text class="deadline-val">{{deadlineText}}</text>
+    </view>
+  </view>
+
+  <!-- 说明 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-icon ic-note"></view>
+      <text class="card-title">任务说明</text>
+    </view>
+    <view class="note-box {{!task.description ? 'empty' : ''}}">
+      <text class="note-quote">“</text>
+      <text class="note-text">{{task.description || '发布者未填写说明'}}</text>
+    </view>
+    <view wx:if="{{images.length > 0}}" class="image-list">
+      <image
+        wx:for="{{images}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        class="task-image"
+        data-url="{{item}}"
+        bindtap="previewImage"
+      />
+    </view>
+  </view>
+
+  <!-- 人员横排 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-icon ic-people"></view>
+      <text class="card-title">相关人员</text>
+    </view>
+    <view class="people-grid">
+      <view class="people-cell">
+        <image
+          wx:if="{{publisherAvatar}}"
+          class="avatar avatar-img"
+          src="{{publisherAvatar}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="avatar primary">{{publisherInitial}}</view>
+        <text class="role">发布者</text>
+        <text class="name">{{publisherMasked}}</text>
+        <text wx:if="{{publisherProfile}}" class="stat">接单 {{publisherProfile.claimedTaskCount || 0}} 次</text>
+      </view>
+      <view class="people-cell {{claimerMasked ? '' : 'empty'}} {{claimerMasked ? 'tappable' : ''}}" bindtap="onOpenClaimerProfile">
+        <image
+          wx:if="{{claimerAvatar}}"
+          class="avatar avatar-img"
+          src="{{claimerAvatar}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="avatar teal">{{claimerInitial || '?'}}</view>
+        <text class="role">接单员</text>
+        <text class="name">{{claimerMasked || '待接单'}}</text>
+        <text class="stat">{{claimerStat}}</text>
+        <text wx:if="{{claimerMasked}}" class="people-tap-hint">查看资料</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+
+  <view class="bottom-bar">
+    <button wx:if="{{canCancel}}" class="bar-btn ghost" bindtap="onCancel">取消</button>
+    <button
+      wx:if="{{canCallClaimer}}"
+      class="bar-btn ghost"
+      hover-class="bar-btn-hover"
+      bindtap="onCallClaimer"
+    >打电话</button>
+    <button
+      wx:if="{{canChat}}"
+      class="bar-btn {{canClaim || canComplete || canConfirm ? 'ghost' : 'primary'}}"
+      hover-class="bar-btn-hover"
+      bindtap="onChat"
+    >联系对方</button>
+    <button wx:if="{{canClaim}}" class="bar-btn primary" hover-class="bar-btn-hover" bindtap="onClaim">立即接单</button>
+    <button wx:if="{{canComplete}}" class="bar-btn primary" hover-class="bar-btn-hover" bindtap="onComplete">标记完成</button>
+    <button wx:if="{{canConfirm}}" class="bar-btn primary" hover-class="bar-btn-hover" bindtap="onConfirm">确认完成</button>
+    <button wx:if="{{canRate}}" class="bar-btn primary" hover-class="bar-btn-hover" bindtap="onRate">评价接单员</button>
+    <button
+      wx:if="{{!canClaim && !canComplete && !canConfirm && !canCancel && !canChat && !canCallClaimer && !canRate}}"
+      class="bar-btn primary"
+      bindtap="onBack"
+    >返回列表</button>
+  </view>
+
+  <!-- 确认完成后评价接单员 -->
+  <view wx:if="{{showRateModal}}" class="rate-mask" catchtouchmove="noop">
+    <view class="rate-panel" catchtap="noop">
+      <view class="rate-head">
+        <text class="rate-title">完成评价</text>
+        <text class="rate-close" bindtap="closeRateModal">关闭</text>
+      </view>
+      <text class="rate-hint">请给接单员 {{claimerMasked || '对方'}} 评分</text>
+      <view class="star-row">
+        <text
+          wx:for="{{rateStars}}"
+          wx:key="*this"
+          class="star {{rateScore >= item ? 'on' : ''}}"
+          data-score="{{item}}"
+          bindtap="onPickStar"
+        >★</text>
+        <text class="star-score">{{rateScore}}.0 分</text>
+      </view>
+      <textarea
+        class="rate-input"
+        placeholder="可选评价（最多300字）"
+        maxlength="300"
+        value="{{rateComment}}"
+        bindinput="onRateCommentInput"
+        show-confirm-bar="{{false}}"
+      />
+      <button
+        class="rate-submit {{rateSubmitting ? 'disabled' : ''}}"
+        hover-class="bar-btn-hover"
+        bindtap="submitRate"
+      >提交评分</button>
+    </view>
+  </view>
+
+  <!-- 接单员资料 / 评价 -->
+  <view wx:if="{{showClaimerSheet}}" class="rate-mask" catchtouchmove="noop" bindtap="closeClaimerSheet">
+    <view class="person-sheet" catchtap="noop">
+      <view class="rate-head">
+        <text class="rate-title">接单员资料</text>
+        <text class="rate-close" bindtap="closeClaimerSheet">关闭</text>
+      </view>
+
+      <view class="person-hero">
+        <image
+          wx:if="{{claimerAvatar}}"
+          class="person-avatar"
+          src="{{claimerAvatar}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="person-avatar person-avatar-fallback">{{claimerInitial || '?'}}</view>
+        <view class="person-hero-main">
+          <text class="person-name">{{claimerMasked}}</text>
+          <view class="person-tags">
+            <text wx:if="{{claimerSheet.riderApproved}}" class="person-tag ok">已认证接单员</text>
+            <text wx:else class="person-tag">接单员</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="person-metrics">
+        <view class="person-metric">
+          <text class="metric-value">{{claimerSheet.ratingText}}</text>
+          <text class="metric-label">接单评分</text>
+        </view>
+        <view class="person-metric person-metric-tap" hover-class="person-metric-hover" bindtap="onOpenClaimerRatings">
+          <text class="metric-value">{{claimerSheet.ratingCount}}</text>
+          <text class="metric-label">评价条数 ›</text>
+        </view>
+        <view class="person-metric">
+          <text class="metric-value">{{claimerSheet.claimedCount}}</text>
+          <text class="metric-label">累计接单</text>
+        </view>
+      </view>
+
+      <view wx:if="{{showClaimerRatings}}" class="claimer-ratings-panel">
+        <view class="claimer-ratings-head">
+          <text class="order-rate-title">全部评价</text>
+          <text class="rate-close" bindtap="closeClaimerRatings">收起</text>
+        </view>
+        <view wx:if="{{claimerRatingsLoading}}" class="claimer-ratings-empty">加载中…</view>
+        <view wx:elif="{{!claimerRatings.length}}" class="claimer-ratings-empty">暂无评价</view>
+        <scroll-view wx:else scroll-y class="claimer-ratings-scroll">
+          <view wx:for="{{claimerRatings}}" wx:key="taskId" class="claimer-rating-item">
+            <view class="claimer-rating-top">
+              <text class="claimer-rating-score">{{item.ratingText}} 分</text>
+              <text class="claimer-rating-meta">{{item.publisherName}} · {{item.ratedAtText}}</text>
+            </view>
+            <text class="claimer-rating-title">{{item.title}}</text>
+            <text wx:if="{{item.comment}}" class="order-rate-comment">{{item.comment}}</text>
+            <text wx:else class="order-rate-comment muted">未填写文字评价</text>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view wx:if="{{claimerSheet.hasOrderRating}}" class="person-order-rate">
+        <text class="order-rate-title">本单评价</text>
+        <text class="order-rate-score">{{claimerSheet.orderRatingText}} 分</text>
+        <text wx:if="{{claimerSheet.orderComment}}" class="order-rate-comment">{{claimerSheet.orderComment}}</text>
+        <text wx:else class="order-rate-comment muted">发布者未填写文字评价</text>
+      </view>
+      <view wx:else class="person-order-rate empty">
+        <text class="order-rate-title">本单评价</text>
+        <text class="order-rate-comment muted">本单暂无评价</text>
+      </view>
+
+      <button
+        wx:if="{{canChat}}"
+        class="rate-submit"
+        hover-class="bar-btn-hover"
+        bindtap="onChatFromClaimerSheet"
+      >去聊天</button>
+    </view>
+  </view>
+</view>
+
+<view wx:elif="{{loading}}" class="loading-wrap">
+  <text class="loading-dots">加载中</text>
+</view>
+
+<view wx:else class="empty-wrap">
+  <view class="empty-illustration"></view>
+  <text class="empty-title">任务不存在</text>
+  <text class="empty-desc">该任务可能已被删除</text>
+</view>

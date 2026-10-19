@@ -1,0 +1,28 @@
+# 密钥：文件留在本机，不进 Git
+local.env
+**/application-secret.yml
+!**/application-secret.yml.example
+**/.env
+!**/.env.example
+!**/.env.development
+!**/.env.production
+
+# 含服务器地址和 root 登录说明，公开仓库前不要提交
+**/server-deploy-*/
+
+# 可再生成的构建产物
+**/node_modules/
+**/dist/
+**/target/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/chroma_db/
+*.log
+
+# 编辑器和系统文件
+**/.idea/
+.DS_Store
+Thumbs.db
+*.local

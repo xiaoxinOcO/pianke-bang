@@ -1,0 +1,132 @@
+spring:
+  config:
+    # application-secret.yml 本地私有（gitignore）；无文件时仅靠环境变量
+    import: optional:classpath:application-secret.yml,optional:classpath:application-nacos.properties,optional:classpath:application-sentinel.yml
+  flyway:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_delivery?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=10000&socketTimeout=45000
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-init-sql: SET NAMES utf8mb4
+      connection-timeout: 15000
+      validation-timeout: 5000
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+
+logging:
+  level:
+    com.alibaba.cloud.nacos.registry: INFO
+    com.alibaba.nacos.client.naming: INFO
+    com.alibaba.cloud.nacos: INFO
+    com.alibaba.nacos: WARN
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:}
+    expiration-ms: 7200000
+  # 服务间内部凭证（网关转发用户头、Feign 调 /internal 必填）
+  internal:
+    token: ${CAMPUS_INTERNAL_TOKEN:}
+  admin:
+    # 仅作启动种子：把这些用户名提升为库内 platformAdmin（日常权限以数据库为准）
+    usernames: admin
+  task:
+    pending-confirm-auto-minutes: 30
+    pending-confirm-check-ms: 60000
+    # 赏金支付成功后是否跳过管理员审核（生产环境建议 false）
+    auto-approve-after-bounty: false
+    auto-approve-check-ms: 60000
+    # 未支付赏金的待审核任务超过该小时数后自动取消（前端关闭支付窗也会立即取消）
+    abandoned-pending-review-hours: 1
+    abandoned-pending-review-check-ms: 300000
+  # DeepSeek API（与官方 curl 一致：https://api.deepseek.com/chat/completions）
+  llm:
+    enabled: ${CAMPUS_LLM_ENABLED:true}
+    base-url: https://api.deepseek.com
+    # 优先 DEEPSEEK_API_KEY，其次 CAMPUS_LLM_API_KEY（写在 application-secret.yml 或环境变量）
+    api-key: ${DEEPSEEK_API_KEY:${CAMPUS_LLM_API_KEY:}}
+    model: deepseek-v4-pro
+    support-model: deepseek-v4-pro
+    timeout-seconds: 120
+    thinking-enabled: true
+    reasoning-effort: high
+    auto-audit-interval-ms: 60000
+  # 向量 RAG（Python：agent/rag/vector/retrieve_server.py）。默认开启；服务不可用时自动降级关键词检索。
+  rag:
+    vector:
+      enabled: ${CAMPUS_RAG_VECTOR_ENABLED:true}
+      base-url: ${CAMPUS_RAG_VECTOR_URL:http://127.0.0.1:8765}
+      timeout-ms: 3000
+  # LangGraph 编排（Python：agent/graph/server.py）。开启后客服优先走 Graph，失败回落 Java Agent。
+  agent:
+    graph:
+      enabled: ${CAMPUS_AGENT_GRAPH_ENABLED:true}
+      base-url: ${CAMPUS_AGENT_GRAPH_URL:http://127.0.0.1:8766}
+      timeout-ms: 120000
+      internal-token: ${CAMPUS_AGENT_GRAPH_TOKEN:}
+  # 兼容旧配置键（忽略即可）
+  ollama:
+    enabled: false
+    base-url: http://127.0.0.1:11434
+    model: qwen2.5:7b
+    support-model: campus-xiaoxin
+    timeout-seconds: 60
+    auto-audit-interval-ms: 60000
+  user-account:
+    id-min: 1000000
+  # 微信登录：密钥请用环境变量，勿提交真实 Secret
+  wechat:
+    mp:
+      enabled: ${WECHAT_MP_ENABLED:true}
+      app-id: ${WECHAT_MP_APP_ID:wx2334d0764b553252}
+      app-secret: ${WECHAT_MP_APP_SECRET:}
+      # 未正式发布时用 trial（体验版）；上线后改 release
+      env-version: ${WECHAT_MP_ENV_VERSION:trial}
+    web:
+      # 开放平台「网站应用」扫码；未配置 app-id/secret 时自动降级为「手机扫码 + 短信确认」
+      enabled: ${WECHAT_WEB_ENABLED:true}
+      app-id: ${WECHAT_WEB_APP_ID:}
+      app-secret: ${WECHAT_WEB_APP_SECRET:}
+      # 微信回调地址，须与开放平台填写一致，例如 https://api.xiaoxin1.xyz/api/auth/wechat/web/oauth-callback
+      redirect-uri: ${WECHAT_WEB_REDIRECT_URI:https://api.xiaoxin1.xyz/api/auth/wechat/web/oauth-callback}
+      # 扫码后手机打开的前端地址（降级短信确认 / 首次绑定手机号）
+      frontend-base-url: ${WECHAT_WEB_FRONTEND_BASE_URL:https://xiaoxin1.xyz}
+      session-ttl-seconds: 180
+  aliyun:
+    dypns:
+      enabled: true
+      # 只读环境变量 / application-secret.yml，仓库内不写真实 AK
+      access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID:}
+      access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:}
+      region: ap-southeast-1
+      scheme-name: 测试方案
+      country-code: 86
+      sign-name: 速通互联验证码
+      template-code: 100005
+      template-param: '{"code":"##code##","min":"5"}'
+      code-length: 6
+      valid-time: 300
+      duplicate-policy: 1
+      interval: 60
+      code-type: 1
+      return-verify-code: true
+      send-sms-up-extend-code: false
+    # 头像图片内容安全（视觉智能 imageaudit ScanImage）；凭证复用 ALIBABA_CLOUD_*
+    image-audit:
+      enabled: ${ALIYUN_IMAGE_AUDIT_ENABLED:true}
+      endpoint: ${ALIYUN_IMAGE_AUDIT_ENDPOINT:imageaudit.cn-shanghai.aliyuncs.com}
+      access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID:}
+      access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:}
+      # 逗号分隔场景：porn 鉴黄；ad 广告/二维码；terrorism 涉政暴恐；live 不良场景
+      scenes: ${ALIYUN_IMAGE_AUDIT_SCENES:porn,ad,terrorism,live}
+      # 已改用 scanImageAdvance 本地上流，不再依赖公网临时 URL（保留配置兼容旧环境）
+      public-base-url: ${IMAGE_AUDIT_PUBLIC_BASE_URL:https://api.xiaoxin1.xyz}
+      # API 异常时：true=仍进入人工待审；false=拒绝本次头像提交
+      fail-open: ${ALIYUN_IMAGE_AUDIT_FAIL_OPEN:true}

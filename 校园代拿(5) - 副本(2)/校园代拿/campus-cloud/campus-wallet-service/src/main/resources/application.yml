@@ -1,0 +1,39 @@
+server:
+  port: 8106
+  tomcat:
+    max-http-post-size: 10MB
+
+spring:
+  application:
+    name: campus-wallet-service
+  config:
+    import: optional:classpath:application-campus-shared.yml,optional:classpath:application-rabbitmq.yml,optional:classpath:application-seata.yml
+  # 与 task 共用物理库，URL 加不同 seataResource，避免 Seata AT 同库双分支冲突
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_delivery?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=10000&socketTimeout=45000&seataResource=wallet
+  cloud:
+    sentinel:
+      transport:
+        port: 8725
+  flyway:
+    enabled: false
+
+campus:
+  remote:
+    audit-log: true
+    system-message: true
+  alipay:
+    enabled: true
+    app-id: "9021000164617524"
+    # 下面这串必须完整上传到开放平台「接口加签方式 → 应用公钥」，不能只填支付宝公钥
+    app-public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0dXT6zszk6sLWaUJSRSDc4I6G2xBm5kUe56ziwHLxaqGx8mD/DPFviLWdwhZoaDzB3fQdpDqlDryEX8ykD8d4H1IrbwTiUEMWjQYCuRIXTpKt3Tt1nnqY9FktXRSWR5s10f4MNjtJOzrS+qMzq/bLjQWaXWDYHCgXMSw9bml0SE0dss/WCYVVBv05Lczk6LyV+qz+68NJf+ZxGdGJaWi604fUhkGNFzOcB5d8OGiRIM9Y1GHD7O53gSAdqPldk3IREhD6ioR2u8dwoHP6WdvU3jvZ7uSrZj2URlituqjx50sBW4AauKL7A2xS4cJo0zmZ2G6aDGwIlSOsBFuABRFIQIDAQAB"
+    private-key: ${ALIPAY_PRIVATE_KEY:}
+    # 下面这串是开放平台保存应用公钥后显示的「支付宝公钥」，用于验签回调
+    alipay-public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo7T37nH9EAXsPmnqyedl4YdmcxZHF+2y9pClioWPCvGGkqMOCebk+CdxoAX0kFa3+xHRP0rc3TmjH1XbMOEjAfIcp3OUfqcoeUcXmqFjhWWz1lSEP0pVwrviIJrdQZg7GurqMa752yl2/EidRAL//s0+SDuwOvOGX6c8ALzqhqGm/Z6Pup8YIZ89/KB75L/cZH3fA9oL48LLqsVVesmxkA72kAN9Uu5uCQvgWalPaeXOlO9khU4PssCx9lYbORHC5UgOeglP/heBKYPvC/7TNO2N+sFSsmz/hqS7pASHz9RCTugEYYWvCz0rw0YPeSoWC6zP+SIyssHtZbRW1u3MwwIDAQAB"
+    gateway-url: "https://openapi-sandbox.dl.alipaydev.com/gateway.do"
+    notify-url: "http://localhost:8080/api/wallet/alipay/notify"
+    return-url: "http://localhost:8080/api/wallet/alipay/return"
+    frontend-return-url: "http://localhost:5173/#/wallet"
+    frontend-task-return-url: "http://localhost:5173/#/publish"
+
+

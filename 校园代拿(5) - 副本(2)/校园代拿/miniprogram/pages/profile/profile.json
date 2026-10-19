@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

@@ -1,0 +1,193 @@
+.status-card {
+
+  text-align: center;
+
+  padding: 60rpx 28rpx;
+
+}
+
+
+
+.status-icon {
+
+  width: 96rpx;
+
+  height: 96rpx;
+
+  margin: 0 auto 24rpx;
+
+  border-radius: 50%;
+
+  position: relative;
+
+}
+
+
+
+.approved-icon {
+
+  background: #e8f5ee;
+
+}
+
+
+
+.approved-icon::after {
+
+  content: '';
+
+  position: absolute;
+
+  top: 28rpx;
+
+  left: 24rpx;
+
+  width: 20rpx;
+
+  height: 36rpx;
+
+  border-right: 6rpx solid #2e7d5a;
+
+  border-bottom: 6rpx solid #2e7d5a;
+
+  transform: rotate(45deg);
+
+}
+
+
+
+.pending-icon {
+
+  background: #fff3e0;
+
+}
+
+
+
+.pending-icon::before {
+
+  content: '';
+
+  position: absolute;
+
+  top: 20rpx;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 6rpx;
+
+  height: 28rpx;
+
+  background: #e65100;
+
+  border-radius: 3rpx;
+
+}
+
+
+
+.pending-icon::after {
+
+  content: '';
+
+  position: absolute;
+
+  bottom: 20rpx;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 8rpx;
+
+  height: 8rpx;
+
+  background: #e65100;
+
+  border-radius: 50%;
+
+}
+
+
+
+.status-text {
+
+  font-size: 32rpx;
+
+  font-weight: 600;
+
+  color: var(--text);
+
+  display: block;
+
+  margin-bottom: 8rpx;
+
+}
+
+
+
+.status-desc {
+
+  display: block;
+
+}
+
+
+
+.field {
+
+  width: 100%;
+
+  margin-bottom: 16rpx;
+
+}
+
+
+
+.tip {
+
+  display: block;
+
+  margin-bottom: 24rpx;
+
+}
+
+
+
+.submit-btn {
+
+  width: 100%;
+
+  margin-top: 12rpx;
+
+}
+
+.field-block {
+  margin-bottom: 20rpx;
+}
+
+.field-label {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text);
+  margin-bottom: 10rpx;
+  font-weight: 500;
+}
+
+.required {
+  color: #07c160;
+  margin-left: 4rpx;
+}
+
+.form-error {
+  margin-bottom: 20rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 12rpx;
+  background: #fdeaea;
+  color: #ef4444;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+

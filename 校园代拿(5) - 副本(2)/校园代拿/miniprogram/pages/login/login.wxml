@@ -1,0 +1,89 @@
+<view class="page login-page">
+  <view class="brand">
+    <image class="brand-logo" src="/images/logo.png" mode="aspectFit" />
+    <image class="brand-wordmark" src="/images/pianke-wordmark.png" mode="heightFix" />
+    <text class="brand-sub">校园顺路代拿，省时又省心</text>
+  </view>
+
+  <view class="segment-tabs">
+    <text class="segment-tab {{mode === 'login' ? 'active' : ''}}" data-mode="login" bindtap="switchMode">登录</text>
+    <text class="segment-tab {{mode === 'register' ? 'active' : ''}}" data-mode="register" bindtap="switchMode">注册</text>
+  </view>
+
+  <view wx:if="{{mode === 'login'}}" class="card form-card">
+    <view wx:if="{{formError}}" class="form-error">{{formError}}</view>
+    <view class="login-type-tabs">
+      <text class="lt-tab {{loginType === 'password' ? 'active' : ''}}" data-type="password" bindtap="switchLoginType">密码登录</text>
+      <text class="lt-tab {{loginType === 'sms' ? 'active' : ''}}" data-type="sms" bindtap="switchLoginType">短信登录</text>
+    </view>
+
+    <block wx:if="{{loginType === 'password'}}">
+      <input class="input field" placeholder="用户名" placeholder-class="input-placeholder" data-field="username" value="{{username}}" bindinput="onInput" />
+      <input class="input field" placeholder="密码（至少6位）" placeholder-class="input-placeholder" password data-field="password" value="{{password}}" bindinput="onInput" />
+      <view class="forgot-row">
+        <text class="forgot-link" bindtap="goForgotPassword">忘记密码？</text>
+      </view>
+    </block>
+
+    <block wx:else>
+      <input class="input field" placeholder="手机号" placeholder-class="input-placeholder" type="number" maxlength="11" data-field="phone" value="{{phone}}" bindinput="onInput" />
+      <view class="code-row">
+        <input class="input field code-input" placeholder="验证码" placeholder-class="input-placeholder" data-field="code" value="{{code}}" bindinput="onInput" />
+        <button class="btn-ghost code-btn" disabled="{{countdown > 0}}" bindtap="sendCode">
+          {{countdown > 0 ? countdown + 's' : '获取验证码'}}
+        </button>
+      </view>
+    </block>
+
+    <view wx:if="{{pickAccounts.length > 0}}" class="pick-list">
+      <text class="pick-title">选择要登录的账号</text>
+      <view
+        wx:for="{{pickAccounts}}"
+        wx:key="userId"
+        class="pick-item"
+        data-user-id="{{item.userId}}"
+        bindtap="onPickAccount"
+        hover-class="pick-item-hover"
+      >
+        <view class="pick-avatar-wrap">
+          <image
+            wx:if="{{item.avatarUrl}}"
+            class="pick-avatar-img"
+            src="{{item.avatarUrl}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="pick-avatar-fallback">{{item.avatarInitial}}</view>
+        </view>
+        <text class="pick-name">{{item.username}}</text>
+        <text class="pick-arrow">›</text>
+      </view>
+    </view>
+
+    <button wx:else class="btn-primary submit-btn" disabled="{{submitting}}" bindtap="onLogin">{{submitting ? '登录中...' : '登录'}}</button>
+
+    <view wx:if="{{demoAccount}}" class="demo-hint" bindtap="fillDemoAccount">
+      <text class="demo-label">本地模式 · 无需后端</text>
+      <text class="demo-text">{{demoAccount.username}} / {{demoAccount.password}}</text>
+    </view>
+  </view>
+
+  <view wx:else class="card form-card">
+    <view wx:if="{{formError}}" class="form-error">{{formError}}</view>
+    <input class="input field" placeholder="用户名（2-20位）*" placeholder-class="input-placeholder" data-field="regUsername" value="{{regUsername}}" bindinput="onInput" />
+    <input class="input field" placeholder="密码（6-32位）*" placeholder-class="input-placeholder" password data-field="regPassword" value="{{regPassword}}" bindinput="onInput" />
+    <input class="input field" placeholder="真实姓名（至少2字）*" placeholder-class="input-placeholder" data-field="regRealName" value="{{regRealName}}" bindinput="onInput" />
+    <input class="input field" placeholder="学号（6-20位数字）*" placeholder-class="input-placeholder" data-field="regStudentId" value="{{regStudentId}}" bindinput="onInput" />
+    <input class="input field" placeholder="手机号" placeholder-class="input-placeholder" type="number" maxlength="11" data-field="phone" value="{{phone}}" bindinput="onInput" />
+    <view class="code-row">
+      <input class="input field code-input" placeholder="验证码" placeholder-class="input-placeholder" data-field="code" value="{{code}}" bindinput="onInput" />
+      <button class="btn-ghost code-btn" disabled="{{countdown > 0}}" bindtap="sendCode">
+        {{countdown > 0 ? countdown + 's' : '获取验证码'}}
+      </button>
+    </view>
+    <button class="btn-primary submit-btn" disabled="{{submitting}}" bindtap="onRegister">{{submitting ? '提交中...' : '注册并登录'}}</button>
+  </view>
+
+  <view class="skip-row" bindtap="onSkip">
+    <text class="skip-text">暂不登录，返回浏览</text>
+  </view>
+</view>

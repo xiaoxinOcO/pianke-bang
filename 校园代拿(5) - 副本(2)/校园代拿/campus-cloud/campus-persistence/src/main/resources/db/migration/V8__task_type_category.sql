@@ -1,0 +1,3 @@
+ALTER TABLE delivery_task
+    ADD COLUMN task_type VARCHAR(32) NOT NULL DEFAULT 'EXPRESS';
+

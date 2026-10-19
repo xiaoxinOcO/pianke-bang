@@ -1,0 +1,5 @@
+ALTER TABLE alipay_recharge_order
+    ADD COLUMN IF NOT EXISTS order_type VARCHAR(20) NOT NULL DEFAULT 'RECHARGE';
+
+ALTER TABLE alipay_recharge_order
+    ADD COLUMN IF NOT EXISTS task_id BIGINT NULL;

@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "任务大厅",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#ededed",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "task-card": "/components/task-card/task-card",
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

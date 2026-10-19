@@ -1,0 +1,13 @@
+本机 Nacos 3.2.1 若微服务报 401「User not found」，请关闭鉴权后重启 Nacos：
+
+1. 停止 Nacos：在 bin 目录执行 shutdown.cmd
+2. 编辑：C:\Users\黄俊达\ai-infra\nacos\standalone\nacos-3.2.1\conf\application.properties
+   将以下三项改为 false：
+   nacos.core.auth.enabled=false
+   nacos.core.auth.admin.enabled=false
+   nacos.core.auth.console.enabled=false
+3. 启动：startup.cmd -m standalone
+4. 微服务无需 Nacos 账号密码即可注册（可将 spring.cloud.nacos.username/password 留空或删除）
+
+控制台与微服务注册地址（本机 Nacos 3.2.1）：http://127.0.0.1:8081
+配置项写法：127.0.0.1:8081（不要带 http:// 和末尾斜杠）

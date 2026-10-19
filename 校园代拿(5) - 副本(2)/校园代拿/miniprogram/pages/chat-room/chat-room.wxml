@@ -1,0 +1,100 @@
+<view class="chat-page">
+  <notify-toast />
+
+  <scroll-view
+    scroll-y
+    class="message-list"
+    scroll-into-view="{{scrollTo}}"
+    scroll-with-animation
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+    <view wx:if="{{messages.length === 0 && !loading}}" class="empty-wrap">
+      <view class="empty-icon"></view>
+      <text class="empty-title">还没有消息</text>
+      <text class="empty-desc">打个招呼，开始沟通吧</text>
+    </view>
+
+    <block wx:for="{{messages}}" wx:key="id">
+      <view wx:if="{{item.showDateLabel}}" class="meta-divider">
+        <text class="meta-text">{{item.dateLabel}}</text>
+      </view>
+
+      <view wx:elif="{{item.showTimeLabel}}" class="meta-divider">
+        <text class="meta-text">{{item.timeLabel}}</text>
+      </view>
+
+      <view
+        id="msg-{{index}}"
+        class="msg-row {{item.isMine ? 'mine' : 'other'}} {{item.groupedWithNext ? 'compact' : 'spaced'}}"
+      >
+        <view wx:if="{{!item.isMine}}" class="avatar-slot">
+          <image
+            wx:if="{{targetAvatar}}"
+            class="avatar-img"
+            src="{{targetAvatar}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="avatar-letter other">{{targetInitial}}</view>
+        </view>
+
+        <view class="msg-body">
+          <view wx:if="{{item.isImage}}" class="bubble image-bubble {{item.groupPos}}">
+            <image
+              class="bubble-image"
+              src="{{item.imageUrl}}"
+              mode="widthFix"
+              lazy-load
+              data-url="{{item.imageUrl}}"
+              bindtap="onPreviewImage"
+            />
+            <text wx:if="{{item.textContent}}" class="bubble-caption" selectable>{{item.textContent}}</text>
+          </view>
+          <view wx:else class="bubble {{item.groupPos}}">
+            <text class="bubble-text" selectable>{{item.textContent}}</text>
+          </view>
+          <text wx:if="{{item.isMine && item.showReadReceipt}}" class="read-receipt">已读</text>
+        </view>
+
+        <view wx:if="{{item.isMine}}" class="avatar-slot">
+          <image
+            wx:if="{{myAvatar}}"
+            class="avatar-img"
+            src="{{myAvatar}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="avatar-letter mine">{{myInitial}}</view>
+        </view>
+      </view>
+    </block>
+
+    <view id="msg-anchor" class="list-bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="composer" style="margin-bottom: {{keyboardHeight}}px;">
+    <view class="composer-inner">
+      <view class="plus-btn {{sending ? 'disabled' : ''}}" bindtap="onPickImage">
+        <text class="plus-icon">+</text>
+      </view>
+      <input
+        class="composer-input"
+        placeholder="输入消息..."
+        placeholder-class="input-placeholder"
+        value="{{content}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="onSend"
+        adjust-position="{{false}}"
+        hold-keyboard
+        cursor-spacing="24"
+        bindkeyboardheightchange="onKeyboardHeightChange"
+      />
+      <view
+        class="send-circle {{canSend ? 'active' : ''}} {{sending ? 'loading' : ''}}"
+        bindtap="onSend"
+      >
+        <text class="send-arrow">↑</text>
+      </view>
+    </view>
+  </view>
+</view>

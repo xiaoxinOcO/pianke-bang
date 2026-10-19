@@ -1,0 +1,15 @@
+<view class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    class="tab-item {{selected === index ? 'active' : ''}}"
+    data-index="{{index}}"
+    bindtap="switchTab"
+  >
+    <view class="tab-icon-wrap">
+      <view class="tab-icon icon-{{item.icon}}"></view>
+      <view wx:if="{{index === 2 && chatBadge > 0}}" class="tab-badge">{{chatBadge > 99 ? '99+' : chatBadge}}</view>
+    </view>
+    <text class="tab-text">{{item.text}}</text>
+  </view>
+</view>

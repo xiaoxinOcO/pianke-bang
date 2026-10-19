@@ -1,0 +1,5 @@
+com.campus.security.AuthHeaderFilter
+com.campus.security.AuthUserNormalizeFilter
+com.campus.config.CampusCloudBootstrap
+com.campus.config.CampusRabbitMqConfig
+com.campus.config.AdminPolicyAutoConfiguration

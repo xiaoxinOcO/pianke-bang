@@ -1,0 +1,40 @@
+[
+
+  { "id": "who", "input": "你是谁", "expect_contains": ["片刻小新", "片刻帮"] },
+
+  { "id": "publish", "input": "怎么发布任务", "expect_contains": ["发布", "赏金"] },
+
+  { "id": "reward", "input": "酬劳什么时候到账", "expect_contains": ["钱包", "确认"] },
+
+  { "id": "rider", "input": "如何成为接单员", "expect_contains": ["接单员申请"] },
+
+  { "id": "fee", "input": "发布任务需要手续费吗", "expect_contains": ["手续费", "赏金"] },
+
+  { "id": "withdraw", "input": "怎么提现", "expect_contains": ["提现", "审核"] },
+
+  { "id": "handoff", "input": "我要投诉转人工", "expect_actions": ["suggest_handoff"] },
+
+  { "id": "tool-wallet", "input": "我的钱包", "expect_source": "tool:wallet", "note": "需登录；返回实时余额" },
+
+  { "id": "tool-tasks", "input": "我的任务", "expect_source": "tool:tasks", "note": "需登录；返回相关任务摘要" },
+
+  { "id": "tool-task-detail", "input": "任务 12 到哪了", "expect_source": "tool:task_detail", "note": "需登录且任务与当前用户相关；ID 可替换" },
+
+  { "id": "tool-withdrawals", "input": "提现审到哪了", "expect_source": "tool:withdrawals", "note": "需登录；返回提现申请进度" },
+
+  { "id": "tool-credit", "input": "我信誉多少", "expect_source": "tool:credit", "note": "需登录；返回信誉分与能否接单" },
+  { "id": "tool-credit-short", "input": "信誉分", "expect_source": "tool:credit", "note": "短问也应命中" },
+  { "id": "tool-credit-alias", "input": "我的信用积分", "expect_source": "tool:credit", "note": "信用积分别名" },
+
+  { "id": "tool-rider-cert", "input": "认证过了吗", "expect_source": "tool:rider_cert", "note": "需登录；返回接单员认证状态" },
+
+  { "id": "tool-appeals", "input": "申诉处理了吗", "expect_source": "tool:appeals", "note": "需登录；已裁决申诉" },
+
+  { "id": "tool-coupons", "input": "我有哪些券", "expect_source": "tool:coupons", "note": "需登录；优惠券列表" },
+
+  { "id": "tool-urgent", "input": "本周还能加急几次", "expect_source": "tool:urgent_quota", "note": "需登录；加急配额" },
+
+  { "id": "tool-transactions", "input": "我的流水", "expect_source": "tool:transactions", "note": "需登录；钱包流水" }
+
+]
+

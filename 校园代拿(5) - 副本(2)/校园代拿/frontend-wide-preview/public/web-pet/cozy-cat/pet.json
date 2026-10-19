@@ -1,0 +1,204 @@
+{
+  "name": "暖喵",
+  "version": "1.0.0",
+  "author": "FOTOPIXY",
+  "license": "Free for personal/commercial use; do not redistribute as standalone asset pack",
+  "description": "Cozy Cat Pixel Art Pack",
+  "spritesDir": "sprites",
+  "spriteSize": 32,
+  "displayScale": 3,
+  "walkSpeed": 28,
+  "runSpeed": 44,
+  "peekImmediate": true,
+  "peekVisible": 0.9,
+  "animations": {
+    "idle": {
+      "files": [
+        "sit_idle_01.png",
+        "sit_idle_02.png",
+        "sit_idle_03.png"
+      ],
+      "fps": 3,
+      "loop": true
+    },
+    "sit": {
+      "files": [
+        "sit_idle_01.png",
+        "sit_idle_02.png",
+        "sit_idle_03.png"
+      ],
+      "fps": 3,
+      "loop": true
+    },
+    "peek_idle": {
+      "files": [
+        "sit_idle_01.png",
+        "sit_idle_02.png",
+        "sit_idle_03.png"
+      ],
+      "fps": 3,
+      "loop": true
+    },
+    "thinking": {
+      "files": [
+        "stare_01.png",
+        "stare_02.png",
+        "stare_03.png",
+        "stare_04.png"
+      ],
+      "fps": 3,
+      "loop": true
+    },
+    "lick": {
+      "files": [
+        "lick_01.png",
+        "lick_02.png",
+        "lick_03.png",
+        "lick_04.png",
+        "lick_05.png",
+        "lick_06.png"
+      ],
+      "fps": 5,
+      "loop": true
+    },
+    "meow": {
+      "files": [
+        "meow_01.png",
+        "meow_02.png",
+        "meow_03.png"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "awaken": {
+      "files": [
+        "meow_01.png",
+        "meow_02.png",
+        "meow_03.png"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "happy": {
+      "files": [
+        "meow_01.png",
+        "meow_02.png",
+        "meow_03.png",
+        "lick_01.png",
+        "lick_02.png",
+        "lick_03.png"
+      ],
+      "fps": 6,
+      "loop": false
+    },
+    "sleep": {
+      "files": [
+        "sleep_01.png",
+        "sleep_02.png",
+        "sleep_03.png"
+      ],
+      "fps": 2,
+      "loop": true
+    },
+    "yawn": {
+      "files": [
+        "stare_01.png",
+        "stare_02.png",
+        "stare_03.png",
+        "stare_04.png"
+      ],
+      "fps": 3,
+      "loop": false
+    },
+    "walk_right": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_left": {
+      "files": [
+        "walk_l_01.png",
+        "walk_l_02.png",
+        "walk_l_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_up": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_down": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_up_right": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_up_left": {
+      "files": [
+        "walk_l_01.png",
+        "walk_l_02.png",
+        "walk_l_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_down_right": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "walk_down_left": {
+      "files": [
+        "walk_l_01.png",
+        "walk_l_02.png",
+        "walk_l_03.png"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "run_right": {
+      "files": [
+        "walk_01.png",
+        "walk_02.png",
+        "walk_03.png"
+      ],
+      "fps": 12,
+      "loop": true
+    },
+    "run_left": {
+      "files": [
+        "walk_l_01.png",
+        "walk_l_02.png",
+        "walk_l_03.png"
+      ],
+      "fps": 12,
+      "loop": true
+    }
+  }
+}

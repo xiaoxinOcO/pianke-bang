@@ -1,0 +1,38 @@
+<view class="center-page">
+  <view class="section" wx:if="{{activities.length > 0}}">
+    <text class="section-title">进行中活动</text>
+    <view
+      wx:for="{{activities}}"
+      wx:key="id"
+      class="act-card {{focus === item.sceneCode || focus === ('template-' + item.templateId) ? 'focus' : ''}}"
+    >
+      <view class="act-main">
+        <text class="act-title">{{item.title}}</text>
+        <text class="act-sub">{{item.subtitle}}</text>
+      </view>
+      <button
+        wx:if="{{item.action === 'CLAIM_TEMPLATE'}}"
+        class="act-btn"
+        size="mini"
+        loading="{{claimingId == item.templateId}}"
+        disabled="{{item.claimed || !!claimingId}}"
+        data-id="{{item.templateId}}"
+        bindtap="onClaimTemplate"
+      >{{item.claimed ? '已领取' : '立即领取'}}</button>
+    </view>
+  </view>
+  <view class="section" wx:else>
+    <text class="section-title">进行中活动</text>
+    <text class="empty-tip">暂无上线活动</text>
+  </view>
+
+  <view class="section">
+    <text class="section-title">兑换码</text>
+    <view class="redeem-row">
+      <input class="redeem-input" placeholder="输入兑换码" value="{{redeemCode}}" bindinput="onRedeemInput" />
+      <button class="redeem-btn" loading="{{redeeming}}" disabled="{{redeeming}}" bindtap="onRedeem">兑换</button>
+    </view>
+  </view>
+
+  <view class="link-mine" bindtap="goMineCoupons">查看我的优惠券 ›</view>
+</view>

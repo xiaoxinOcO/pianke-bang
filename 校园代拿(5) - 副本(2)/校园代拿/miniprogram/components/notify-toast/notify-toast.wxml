@@ -1,0 +1,7 @@
+<view wx:if="{{visible}}" class="notify-toast" bindtap="onTap">
+  <view class="notify-main">
+    <text class="notify-title">{{title}}</text>
+    <text class="notify-message">{{message}}</text>
+  </view>
+  <view class="notify-close" catchtap="onClose">×</view>
+</view>

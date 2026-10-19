@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS sms_verification_code (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  phone VARCHAR(11) NOT NULL,
+  code CHAR(6) NOT NULL,
+  expire_at DATETIME(6) NOT NULL,
+  consumed TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  INDEX idx_sms_phone (phone)
+);

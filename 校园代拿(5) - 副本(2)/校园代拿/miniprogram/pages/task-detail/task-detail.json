@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "任务详情",
+  "navigationBarBackgroundColor": "#07c160",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f2f4f7",
+  "usingComponents": {
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

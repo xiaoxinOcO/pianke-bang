@@ -1,0 +1,19 @@
+export function sleep(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
+export function withRequestTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error(message)), ms)
+    promise.then(
+      (value) => {
+        window.clearTimeout(timer)
+        resolve(value)
+      },
+      (error) => {
+        window.clearTimeout(timer)
+        reject(error)
+      }
+    )
+  })
+}

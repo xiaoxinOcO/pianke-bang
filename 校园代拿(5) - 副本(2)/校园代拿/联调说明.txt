@@ -1,0 +1,42 @@
+校园代拿 — 本地同时跑前端 + 微服务后端
+
+一、前端在哪
+  目录：frontend\
+  接口地址：src\constants\api.ts（用环境变量拼出 authBase、apiBase）
+
+二、后端地址怎么对上
+  开发环境读 frontend\.env.development：
+    VITE_API_ORIGIN=          （留空，走 Vite 代理 /api → localhost:8080）
+    或直接写 http://localhost:8080
+  网关统一入口：http://localhost:8080/api/...
+  若改了网关端口，请同步改 .env.development 与 vite.config.ts，保存后重新 npm run dev。
+
+三、启动顺序
+  0. 中间件：cd campus-cloud\deploy → docker compose up -d
+     或本机已安装 Nacos(8848)、RabbitMQ(5672)
+  1. 微服务：IDE 分别运行各服务主类
+     或在 campus-cloud 下执行 scripts\restart-all.ps1（编译并用 spring-boot:run 拉起网关和六个服务）
+     campus-cloud\deploy\启动微服务.bat 只负责编译并打印端口，不会替你把服务跑起来
+  2. 前端：
+     cd frontend
+     npm install        （首次）
+     npm run dev
+
+  浏览器打开 http://localhost:5173
+
+四、不要和「只有后端」搞混
+  只启动微服务没有网页；必须再开终端 npm run dev 才有前端界面。
+
+五、人工客服工作台（5174，与用户端互通）
+  目录：cs-console\
+  启动：cd cs-console && npm install && npm run dev
+  浏览器 http://localhost:5174 ，用 admin 账号登录。
+  用户端点「转人工」后，客服在 5174 实时回复（共用 /api/chat 与 WebSocket /ws）。
+
+六、没有「微服务 + 前端」的一键脚本
+  start-all.bat、start-all-microservices.bat 已不在仓库里。
+  后端用 IDE 或 scripts\restart-all.ps1；用户端、客服台仍要各自 npm run dev。
+  更详细的 Nacos/端口说明见 campus-cloud\联调说明-微服务.txt
+
+七、云服务器部署
+  见 campus-cloud\deploy\云服部署说明.txt

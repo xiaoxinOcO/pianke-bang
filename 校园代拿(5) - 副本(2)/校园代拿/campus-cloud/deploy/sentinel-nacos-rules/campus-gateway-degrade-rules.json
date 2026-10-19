@@ -1,0 +1,20 @@
+[
+  {
+    "resource": "campus-chat-service-api",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 0.3,
+    "timeWindow": 20,
+    "minRequestAmount": 5,
+    "statIntervalMs": 1000
+  },
+  {
+    "resource": "campus-wallet-service-api",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 0.3,
+    "timeWindow": 20,
+    "minRequestAmount": 5,
+    "statIntervalMs": 1000
+  }
+]

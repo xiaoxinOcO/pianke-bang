@@ -1,0 +1,27 @@
+校园代拿 — Elasticsearch 7.7.1 搜索接入说明
+
+一、本机目录
+  微服务工具\elasticsearch-7.7.1-windows-x86_64\elasticsearch-7.7.1
+  启动脚本: bin\elasticsearch.bat
+
+二、启动
+  双击 deploy/启动Elasticsearch.bat
+  或 CMD：
+    cd 微服务工具\elasticsearch-7.7.1-windows-x86_64\elasticsearch-7.7.1
+    set discovery.type=single-node
+    set xpack.security.enabled=false
+    bin\elasticsearch.bat
+
+  验证: http://127.0.0.1:9200
+
+三、微服务配置（campus-task-service/application.yml）
+  app.elasticsearch.enabled: true
+  app.elasticsearch.hosts: http://127.0.0.1:9200
+
+四、测试
+  GET http://127.0.0.1:8080/api/tasks?keyword=快递
+
+五、中文分词 IK（可选，版本 7.7.1）
+  cd 微服务工具\elasticsearch-7.7.1-windows-x86_64\elasticsearch-7.7.1
+  bin\elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.7.1/elasticsearch-analysis-ik-7.7.1.zip
+  重启 ES

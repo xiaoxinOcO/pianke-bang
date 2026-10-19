@@ -1,0 +1,169 @@
+<view class="order-page">
+  <!-- 身份切换，类似店铺订单入口 -->
+  <view class="role-bar">
+    <view
+      class="role-item {{tab === 'published' ? 'active' : ''}}"
+      data-tab="published"
+      bindtap="onTabChange"
+    >我发布的</view>
+    <view
+      class="role-item {{tab === 'claimed' ? 'active' : ''}}"
+      data-tab="claimed"
+      bindtap="onTabChange"
+    >我接的</view>
+  </view>
+
+  <!-- 状态筛选：对标「全部/待付款/待使用…」 -->
+  <scroll-view class="status-scroll" scroll-x>
+    <view class="status-row">
+      <view
+        wx:for="{{statusTabs}}"
+        wx:key="key"
+        class="status-tab {{statusFilter === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onStatusFilter"
+      >{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <block wx:if="{{displayTasks.length > 0}}">
+    <view
+      wx:for="{{displayTasks}}"
+      wx:key="id"
+      class="order-card"
+      data-id="{{item.id}}"
+      bindtap="openDetail"
+    >
+      <!-- 顶栏：类型 + 状态 -->
+      <view class="order-head">
+        <view class="shop-line">
+          <view class="type-dot {{item.typeCls}}"></view>
+          <text class="shop-name">{{item.typeLabel}}</text>
+          <text class="shop-arrow">›</text>
+          <text class="order-no">编号 #{{item.id}}</text>
+        </view>
+        <text class="order-status {{item.statusCls}}">{{item.statusLabel}}</text>
+      </view>
+
+      <!-- 中区：缩略图 + 内容 + 价格 -->
+      <view class="order-body">
+        <view class="thumb {{item.typeCls}}">
+          <!-- 快递：立体包裹 -->
+          <view wx:if="{{item.typeCls === 'express'}}" class="ti ti-express">
+            <view class="ti-pkg">
+              <view class="ti-pkg-top"></view>
+              <view class="ti-pkg-front">
+                <view class="ti-pkg-tape-v"></view>
+                <view class="ti-pkg-tape-h"></view>
+              </view>
+              <view class="ti-pkg-tag"></view>
+            </view>
+          </view>
+          <!-- 外卖：餐盒 + 蒸汽 -->
+          <view wx:elif="{{item.typeCls === 'food'}}" class="ti ti-food">
+            <view class="ti-steam s1"></view>
+            <view class="ti-steam s2"></view>
+            <view class="ti-steam s3"></view>
+            <view class="ti-bowl-lid"></view>
+            <view class="ti-bowl"></view>
+          </view>
+          <!-- 打印：折角文档 -->
+          <view wx:elif="{{item.typeCls === 'print'}}" class="ti ti-print">
+            <view class="ti-doc">
+              <view class="ti-doc-fold"></view>
+              <view class="ti-doc-line l1"></view>
+              <view class="ti-doc-line l2"></view>
+              <view class="ti-doc-line l3"></view>
+            </view>
+          </view>
+          <!-- 排队：人物 + 号牌 -->
+          <view wx:elif="{{item.typeCls === 'queue'}}" class="ti ti-queue">
+            <view class="ti-person-head"></view>
+            <view class="ti-person-body"></view>
+            <view class="ti-ticket">
+              <text class="ti-ticket-n">1</text>
+            </view>
+          </view>
+          <!-- 其他 -->
+          <view wx:else class="ti ti-other">
+            <view class="ti-spark a"></view>
+            <view class="ti-spark b"></view>
+            <view class="ti-spark c"></view>
+          </view>
+        </view>
+
+        <view class="order-info">
+          <view class="order-title-row">
+            <text class="order-title">{{item.title}}</text>
+            <text wx:if="{{item.urgentTag}}" class="order-urgent">{{item.urgentTag}}</text>
+          </view>
+          <text class="order-route">取 {{item.pickupShort}}</text>
+          <text class="order-route">送 {{item.dropoffShort}}</text>
+          <text class="order-meta">{{item.timeText}} · {{item.personText}}</text>
+        </view>
+
+        <view class="order-price-col">
+          <text class="order-price">¥{{item.rewardText}}</text>
+          <text class="order-count">共1项</text>
+        </view>
+      </view>
+
+      <!-- 底栏按钮：对标「评价 / 再来一单」 -->
+      <view class="order-actions" catchtap="noop">
+        <button
+          class="act-btn ghost"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="openDetailBtn"
+        >查看详情</button>
+        <button
+          wx:if="{{item.canChat}}"
+          class="act-btn ghost"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="onChat"
+        >联系对方</button>
+        <button
+          wx:if="{{item.canCancel}}"
+          class="act-btn ghost"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="onCancel"
+        >取消任务</button>
+        <button
+          wx:if="{{item.canComplete}}"
+          class="act-btn primary"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="onComplete"
+        >标记完成</button>
+        <button
+          wx:if="{{item.canConfirm}}"
+          class="act-btn primary"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="onConfirm"
+        >确认完成</button>
+        <button
+          wx:if="{{item.canRepublish}}"
+          class="act-btn primary"
+          size="mini"
+          data-id="{{item.id}}"
+          catchtap="onRepublish"
+        >再发一单</button>
+      </view>
+    </view>
+  </block>
+
+  <view wx:elif="{{!loading}}" class="empty-wrap">
+    <view class="empty-box">
+      <view class="empty-icon"></view>
+      <text class="empty-title">暂无相关任务</text>
+      <text class="empty-desc">{{tab === 'published' ? '去发布一个任务吧' : '去大厅看看有没有合适的任务'}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <text class="loading-dots">加载中</text>
+  </view>
+</view>

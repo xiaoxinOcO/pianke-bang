@@ -1,0 +1,19 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      reply-timeout: 10000
+
+campus:
+  mq:
+    enabled: true
+    realtime: true
+    audit-log: true
+    wallet:
+      lock: false
+      refund: false
+      income: false
+      compensate: false

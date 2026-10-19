@@ -1,0 +1,30 @@
+[
+  {
+    "resource": "POST:/internal/audit/log",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 0.5,
+    "timeWindow": 10,
+    "minRequestAmount": 5,
+    "statIntervalMs": 1000
+  },
+  {
+    "resource": "POST:/internal/realtime/push",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 0.5,
+    "timeWindow": 10,
+    "minRequestAmount": 5,
+    "statIntervalMs": 1000
+  },
+  {
+    "resource": "POST:/internal/ai/audit-task",
+    "limitApp": "default",
+    "grade": 0,
+    "count": 3000,
+    "slowRatioThreshold": 0.6,
+    "timeWindow": 60,
+    "minRequestAmount": 5,
+    "statIntervalMs": 1000
+  }
+]

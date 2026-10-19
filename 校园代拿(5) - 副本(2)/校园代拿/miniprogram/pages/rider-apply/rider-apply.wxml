@@ -1,0 +1,42 @@
+<view class="page">
+  <notify-toast />  <view wx:if="{{user && user.riderApproved}}" class="card status-card approved">
+    <view class="status-icon approved-icon"></view>
+    <text class="status-text">你已是认证接单员</text>
+    <text class="subtext status-desc">可以前往大厅接单赚取赏金</text>
+  </view>
+
+  <view wx:elif="{{user && user.riderApplicationPending}}" class="card status-card pending">
+    <view class="status-icon pending-icon"></view>
+    <text class="status-text">申请审核中</text>
+    <text class="subtext status-desc">请耐心等待管理员审核，结果会通过顶部提醒通知你</text>
+  </view>
+
+  <view wx:else class="card">
+    <text class="section-title">接单员申请</text>
+    <text class="subtext tip">通过审核后可在大厅接单赚取赏金，带 * 为必填</text>
+
+    <view class="field-block">
+      <text class="field-label">真实姓名<text class="required">*</text></text>
+      <input class="input field" placeholder="请填写真实姓名" data-field="realName" value="{{realName}}" bindinput="onInput" />
+    </view>
+
+    <view class="field-block">
+      <text class="field-label">学号<text class="required">*</text></text>
+      <input class="input field" placeholder="6-20位数字学号" data-field="studentId" value="{{studentId}}" bindinput="onInput" />
+    </view>
+
+    <view class="field-block">
+      <text class="field-label">手机号<text class="required">*</text></text>
+      <input class="input field" placeholder="11位手机号" type="number" maxlength="11" data-field="phone" value="{{phone}}" bindinput="onInput" />
+    </view>
+
+    <view class="field-block">
+      <text class="field-label">申请理由<text class="required">*</text></text>
+      <textarea class="textarea field" placeholder="请说明申请理由，如熟悉校园路线、可接单时间段等" data-field="reason" value="{{reason}}" bindinput="onInput" maxlength="300" />
+    </view>
+
+    <view wx:if="{{formError}}" class="form-error">{{formError}}</view>
+
+    <button class="btn-primary submit-btn" loading="{{submitting}}" bindtap="onSubmit">提交申请</button>
+  </view>
+</view>

@@ -1,0 +1,129 @@
+【使用说明】
+1. 每张表：全选该表区域 → 复制 → 粘贴到 Word → 「文本转换成表格」→ 分隔符「制表符」→ 列数 6。
+2. 字段定义依据 campus-cloud/campus-persistence 实体类及 Flyway 迁移脚本，数据库名 campus_delivery。
+
+================================================================================
+表 5-1  用户账户表（user_account）
+================================================================================
+字段名	数据类型	允许空值	数据约束	默认值	字段说明
+id	BIGINT	否	主键，自增	—	用户唯一标识
+username	VARCHAR(50)	否	唯一，非空	—	登录用户名
+password	VARCHAR(100)	否	非空，加密存储	—	登录密码（BCrypt 等）
+enabled	BOOLEAN	否	—	true	账号是否启用；false 时禁止登录
+active_session_id	VARCHAR(64)	是	—	NULL	当前有效会话 ID，用于单点登录/踢下线
+last_seen_at	DATETIME	是	—	NULL	用户最后活跃时间
+avatar_url	LONGTEXT	是	—	NULL	当前生效头像（Base64 或 URL）
+pending_avatar_url	LONGTEXT	是	—	NULL	待审核头像内容
+avatar_pending	BOOLEAN	否	—	false	是否存在待审核头像
+rider_approved	BOOLEAN	否	—	false	是否已通过接单员认证
+rider_application_pending	BOOLEAN	否	—	false	是否存在待审核的接单员申请
+real_name	VARCHAR(50)	是	—	NULL	用户真实姓名（个人资料）
+student_id	VARCHAR(50)	是	—	NULL	学号
+gender	VARCHAR(10)	是	—	NULL	性别
+phone	VARCHAR(30)	是	—	NULL	绑定手机号
+rider_real_name	VARCHAR(50)	是	—	NULL	接单员申请-真实姓名
+rider_student_id	VARCHAR(50)	是	—	NULL	接单员申请-学号
+rider_phone	VARCHAR(30)	是	—	NULL	接单员申请-联系电话
+rider_apply_reason	VARCHAR(300)	是	—	NULL	接单员申请理由
+rider_applied_at	DATETIME	是	—	NULL	接单员申请提交时间
+credit_score	INT	否	0~100	80	用户信誉分，影响接单权限
+blocked_until	DATETIME	是	—	NULL	信誉封禁截止时间，空表示未封禁
+pending_penalty	DECIMAL(12,2)	否	≥0	0.00	待扣罚金额（信誉体系）
+created_at	DATETIME	否	非空	当前时间	账号创建时间
+
+================================================================================
+表 5-2  配送任务表（delivery_task）
+================================================================================
+字段名	数据类型	允许空值	数据约束	默认值	字段说明
+id	BIGINT	否	主键，自增	—	任务唯一标识
+title	VARCHAR(100)	否	非空	—	任务标题
+task_type	VARCHAR(32)	否	枚举见说明	EXPRESS	任务分类：EXPRESS/FOOD/PRINT/QUEUE/OTHER
+pickup_location	VARCHAR(120)	否	非空	—	取件地点文字描述
+pickup_lat	DECIMAL(10,6)	是	—	NULL	取件点纬度
+pickup_lng	DECIMAL(10,6)	是	—	NULL	取件点经度
+dropoff_location	VARCHAR(120)	否	非空	—	送达地点文字描述
+dropoff_lat	DECIMAL(10,6)	是	—	NULL	送达点纬度
+dropoff_lng	DECIMAL(10,6)	是	—	NULL	送达点经度
+reward	DECIMAL(10,2)	否	>0	—	任务赏金（元）
+publisher_name	VARCHAR(50)	否	非空	—	发布者用户名
+contact	VARCHAR(100)	否	非空	—	发布者联系方式
+description	TEXT	是	—	NULL	任务详细描述
+delivery_start_at	DATETIME	是	—	NULL	期望配送开始时间
+delivery_end_at	DATETIME	是	—	NULL	期望配送结束时间
+latest_delivery_at	DATETIME	是	—	NULL	最晚送达时间，超时转 OVERDUE
+image_urls	LONGTEXT	是	JSON 数组字符串	NULL	任务图片 URL 列表
+status	VARCHAR(20)	否	枚举见说明	PENDING_REVIEW	任务状态，见 TaskStatus 枚举
+claimer_name	VARCHAR(50)	是	—	NULL	接单员用户名
+claimer_rating	DECIMAL(2,1)	是	1.0~5.0	NULL	发布者对接单员评分
+claimer_rating_comment	VARCHAR(300)	是	—	NULL	评价文字内容
+claimer_rated_at	DATETIME	是	—	NULL	评价时间
+created_at	DATETIME	否	非空	当前时间	任务创建时间
+updated_at	DATETIME	否	非空	当前时间	任务最后更新时间
+rider_no_fault	BOOLEAN	是	—	NULL	申诉成立后对接单员是否不计失败
+appeal_approved	BOOLEAN	是	—	NULL	申诉是否成立
+appeal_service_completed	BOOLEAN	是	—	NULL	申诉认定服务是否实际完成
+overdue_rejected	BOOLEAN	否	—	false	是否因接单员超时而被驳回
+appeal_audited_by	VARCHAR(50)	是	—	NULL	申诉审核管理员用户名
+appeal_remark	VARCHAR(300)	是	—	NULL	申诉审核备注
+appeal_audited_at	DATETIME	是	—	NULL	申诉审核时间
+bounty_prepaid	BOOLEAN	是	—	NULL	发布时是否已从钱包预付赏金
+admin_reject_remark	VARCHAR(500)	是	—	NULL	管理员驳回原因，重提后清空
+
+【status 枚举值】PENDING_REVIEW（待审核）、REJECTED（已驳回）、OPEN（待接单）、CLAIMED（配送中）、OVERDUE（超时）、PENDING_CONFIRMATION（待确认）、COMPLETED（已完成）、CANCELLED（已取消）
+
+================================================================================
+表 5-3  聊天消息表（chat_message）
+================================================================================
+字段名	数据类型	允许空值	数据约束	默认值	字段说明
+id	BIGINT	否	主键，自增	—	消息唯一标识
+from_username	VARCHAR(50)	否	非空	—	发送方用户名
+to_username	VARCHAR(50)	否	非空	—	接收方用户名
+content	LONGTEXT	否	非空	—	消息正文内容
+created_at	DATETIME	否	非空	当前时间	消息发送时间
+
+================================================================================
+表 5-4  钱包账户表（wallet_account）
+================================================================================
+字段名	数据类型	允许空值	数据约束	默认值	字段说明
+id	BIGINT	否	主键，自增	—	钱包记录唯一标识
+username	VARCHAR(50)	否	唯一，非空	—	关联用户用户名，一对一
+balance	DECIMAL(12,2)	否	≥0	0.00	当前可用余额（元）
+total_income	DECIMAL(12,2)	否	≥0	0.00	累计收入
+total_withdrawn	DECIMAL(12,2)	否	≥0	0.00	累计已成功提现金额
+withdrawing_amount	DECIMAL(12,2)	否	≥0	0.00	提现审核中冻结金额
+created_at	DATETIME	否	非空	当前时间	钱包创建时间
+updated_at	DATETIME	否	非空	当前时间	钱包最后更新时间
+
+================================================================================
+表 5-5  钱包提现申请表（wallet_withdraw_request）
+================================================================================
+字段名	数据类型	允许空值	数据约束	默认值	字段说明
+id	BIGINT	否	主键，自增	—	提现申请唯一标识
+username	VARCHAR(50)	否	非空	—	申请用户用户名
+amount	DECIMAL(12,2)	否	>0	—	申请提现金额（元）
+status	VARCHAR(20)	否	枚举见说明	PENDING	提现审核状态
+account_name	VARCHAR(100)	是	—	NULL	收款户名
+account_no	VARCHAR(100)	是	—	NULL	收款账号（银行卡/支付宝等）
+remark	VARCHAR(300)	是	—	NULL	用户申请备注
+audited_by	VARCHAR(50)	是	—	NULL	审核管理员用户名
+audit_remark	VARCHAR(300)	是	—	NULL	管理员审核意见
+audited_at	DATETIME	是	—	NULL	审核完成时间
+created_at	DATETIME	否	非空	当前时间	申请创建时间
+updated_at	DATETIME	否	非空	当前时间	申请最后更新时间
+
+【status 枚举值】PENDING（待审核）、APPROVED（已通过）、REJECTED（已驳回）
+
+================================================================================
+附：相关枚举补充（撰写报告时可引用）
+================================================================================
+【wallet_transaction.type 流水类型】
+TASK_BOUNTY_PAY（发布预付赏金）、TASK_BOUNTY_REFUND（赏金退还）、TASK_INCOME（任务收入）、
+WITHDRAW_APPLY（提现申请冻结）、WITHDRAW_APPROVED（提现成功）、WITHDRAW_REJECTED（提现驳回退回）、
+ADMIN_CREDIT（管理员充值）等。
+
+【notice 公告表主要字段（扩展参考）】
+id、title(VARCHAR80)、content(LONGTEXT)、published(BOOLEAN)、pinned(BOOLEAN)、
+operator(VARCHAR50)、created_at、updated_at。
+
+【admin_operation_log 操作日志主要字段（扩展参考）】
+id、operator_name、action_type、target_task_id、detail(VARCHAR500)、created_at。

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "申请接单员",
+  "usingComponents": {
+    "notify-toast": "/components/notify-toast/notify-toast"
+  }
+}

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>片刻帮 · 接口文档</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --bg-elev: #171d25;
+      --bg-side: #12181f;
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #e8eef4;
+      --muted: #8b9aab;
+      --accent: #3dcaa0;
+      --accent-dim: rgba(61, 202, 160, 0.14);
+      --warn: #f0b429;
+      --code-bg: #0b1015;
+      --radius: 12px;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Noto Sans SC", "DM Sans", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(61, 202, 160, 0.12), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(88, 140, 255, 0.08), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      background: color-mix(in srgb, var(--bg-side) 92%, transparent);
+      border-right: 1px solid var(--line);
+      padding: 28px 18px 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      padding: 4px 10px 22px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .brand strong {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    nav a {
+      display: block;
+      padding: 10px 12px;
+      margin: 2px 0;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.15s ease;
+    }
+    nav a:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+    nav a.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    nav .num {
+      display: inline-block;
+      width: 1.6em;
+      color: inherit;
+      opacity: 0.7;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+    }
+
+    main {
+      padding: 36px 48px 80px;
+      max-width: 920px;
+      width: 100%;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    .pill {
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+    }
+    .pill em { color: var(--accent); font-style: normal; }
+
+    #content {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 120px), var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 36px 40px;
+      box-shadow: var(--shadow);
+      min-height: 60vh;
+    }
+
+    #content > *:first-child { margin-top: 0; }
+    #content h1 {
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.6em;
+      line-height: 1.2;
+    }
+    #content h2 {
+      font-size: 1.35rem;
+      margin: 2em 0 0.7em;
+      padding-bottom: 0.35em;
+      border-bottom: 1px solid var(--line);
+    }
+    #content h3 {
+      font-size: 1.05rem;
+      margin: 1.6em 0 0.6em;
+      font-family: "JetBrains Mono", "Noto Sans SC", monospace;
+      color: #d7e7f5;
+    }
+    #content p, #content li { color: #c5d0db; line-height: 1.7; }
+    #content a { color: var(--accent); text-decoration: none; }
+    #content a:hover { text-decoration: underline; }
+    #content blockquote {
+      margin: 1em 0;
+      padding: 12px 16px;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-dim);
+      border-radius: 0 10px 10px 0;
+      color: #d5ebe3;
+    }
+    #content blockquote p { margin: 0; color: inherit; }
+    #content hr {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 2em 0;
+    }
+    #content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0 1.4em;
+      font-size: 14px;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+    #content th, #content td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #content th {
+      background: rgba(255,255,255,0.03);
+      color: #aebccd;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+    #content tr:last-child td { border-bottom: none; }
+    #content code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.9em;
+      background: rgba(255,255,255,0.06);
+      padding: 0.12em 0.4em;
+      border-radius: 5px;
+      color: #9be7cb;
+    }
+    #content pre {
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 18px;
+      overflow: auto;
+      margin: 1em 0 1.4em;
+    }
+    #content pre code {
+      background: none;
+      padding: 0;
+      color: #d7e3ef;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .error {
+      padding: 20px;
+      border-radius: var(--radius);
+      background: rgba(240, 180, 41, 0.1);
+      border: 1px solid rgba(240, 180, 41, 0.35);
+      color: #f6d78a;
+      line-height: 1.7;
+    }
+    .error code { color: #fff; }
+
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      main { padding: 24px 16px 60px; }
+      #content { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <div class="brand">
+      <small>Campus API</small>
+      <strong>片刻帮</strong>
+      <p>接口文档可视化预览<br />入口 :8080 · /api/**</p>
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <main>
+    <div class="toolbar">
+      <span class="pill">Base <em>http://localhost:8080</em></span>
+      <span class="pill" id="current-file">README.md</span>
+    </div>
+    <article id="content">加载中…</article>
+  </main>
+  <script>
+    const docs = [
+      { file: "README.md", label: "总览", num: "··" },
+      { file: "00-gateway.md", label: "网关与约定", num: "00" },
+      { file: "01-auth.md", label: "认证与用户", num: "01" },
+      { file: "02-tasks.md", label: "任务大厅", num: "02" },
+      { file: "03-wallet-payments.md", label: "钱包与支付", num: "03" },
+      { file: "04-growth.md", label: "优惠与活动", num: "04" },
+      { file: "05-chat-realtime.md", label: "聊天与实时", num: "05" },
+      { file: "06-support.md", label: "客服与支持", num: "06" },
+      { file: "07-comms.md", label: "公告消息反馈", num: "07" },
+      { file: "08-admin.md", label: "管理后台", num: "08" },
+      { file: "09-internal-feign.md", label: "内部 Feign", num: "09" },
+    ];
+
+    const nav = document.getElementById("nav");
+    const content = document.getElementById("content");
+    const currentFile = document.getElementById("current-file");
+
+    marked.setOptions({ gfm: true, breaks: false });
+
+    docs.forEach((d) => {
+      const a = document.createElement("a");
+      a.href = "#" + d.file;
+      a.innerHTML = `<span class="num">${d.num}</span>${d.label}`;
+      a.dataset.file = d.file;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        location.hash = d.file;
+      });
+      nav.appendChild(a);
+    });
+
+    async function load(file) {
+      currentFile.textContent = file;
+      nav.querySelectorAll("a").forEach((a) => {
+        a.classList.toggle("active", a.dataset.file === file);
+      });
+      content.innerHTML = "<p style='color:var(--muted)'>加载中…</p>";
+      try {
+        const res = await fetch("./" + file, { cache: "no-store" });
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        const md = await res.text();
+        content.innerHTML = marked.parse(md);
+        content.querySelectorAll("a[href$='.md']").forEach((link) => {
+          const href = link.getAttribute("href") || "";
+          if (href.startsWith("http")) return;
+          const name = href.replace("./", "").split("#")[0];
+          if (docs.some((d) => d.file === name)) {
+            link.addEventListener("click", (e) => {
+              e.preventDefault();
+              location.hash = name;
+            });
+          }
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        content.innerHTML = `
+          <div class="error">
+            <strong>无法直接用本地文件协议加载文档</strong><br />
+            请在本目录启动一个静态服务后再打开本页：<br /><br />
+            <code>cd docs/api</code><br />
+            <code>npx --yes serve .</code><br /><br />
+            然后浏览器访问提示的地址，打开 <code>preview.html</code>。<br /><br />
+            错误：${String(err.message || err)}
+          </div>`;
+      }
+    }
+
+    function route() {
+      const hash = (location.hash || "#README.md").slice(1);
+      const file = docs.some((d) => d.file === hash) ? hash : "README.md";
+      load(file);
+    }
+
+    window.addEventListener("hashchange", route);
+    route();
+  </script>
+</body>
+</html>

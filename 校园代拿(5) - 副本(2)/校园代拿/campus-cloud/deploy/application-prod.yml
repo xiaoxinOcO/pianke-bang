@@ -1,0 +1,24 @@
+# 云服务器生产配置（同库部署、不依赖 Seata / Sentinel Dashboard / Elasticsearch）
+# 用法：复制到服务器 /opt/campus/application-prod.yml
+# start-services.sh 会自动加载此文件
+
+seata:
+  enabled: false
+
+spring:
+  cloud:
+    sentinel:
+      eager: false
+
+app:
+  elasticsearch:
+    enabled: false
+
+campus:
+  gateway:
+    # 单机部署：网关直连 auth 校验会话，避免 Nacos 负载均衡偶发找不到实例
+    auth-validate-base-url: "http://127.0.0.1:8101"
+  remote:
+    # 微服务分库/分实例部署时必须 true，让 task-service 通过 wallet-service 扣款。
+    # 若所有服务已确认共用同一 campus_delivery 库且扣款正常，可改回 false。
+    wallet: true

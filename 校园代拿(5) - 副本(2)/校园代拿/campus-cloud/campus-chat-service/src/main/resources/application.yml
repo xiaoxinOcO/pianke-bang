@@ -1,0 +1,20 @@
+server:
+  port: 8105
+  tomcat:
+    max-http-post-size: 10MB
+
+spring:
+  application:
+    name: campus-chat-service
+  config:
+    import: optional:classpath:application-campus-shared.yml,optional:classpath:application-rabbitmq.yml
+  cloud:
+    sentinel:
+      transport:
+        port: 8724
+  flyway:
+    enabled: false
+
+campus:
+
+

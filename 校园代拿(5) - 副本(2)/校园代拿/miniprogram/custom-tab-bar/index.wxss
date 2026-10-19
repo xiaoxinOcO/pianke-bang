@@ -1,0 +1,163 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(108rpx + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
+  display: flex;
+  border-top: 1rpx solid rgba(27, 36, 48, 0.06);
+  z-index: 999;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  padding-top: 8rpx;
+}
+
+.tab-icon-wrap {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.tab-badge {
+  position: absolute;
+  top: -4rpx;
+  right: -12rpx;
+  min-width: 28rpx;
+  height: 28rpx;
+  padding: 0 6rpx;
+  border-radius: 999rpx;
+  background: #07c160;
+  color: #fff;
+  font-size: 18rpx;
+  line-height: 28rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.tab-icon {
+  position: relative;
+  color: #94a3b8;
+}
+
+.tab-item.active .tab-icon {
+  color: #07c160;
+}
+
+.tab-text {
+  font-size: 20rpx;
+  color: #94a3b8;
+  line-height: 1;
+}
+
+.tab-item.active .tab-text {
+  color: #07c160;
+  font-weight: 600;
+}
+
+/* 大厅 - 房屋图标 */
+.icon-hall {
+  width: 36rpx;
+  height: 32rpx;
+  border: 3rpx solid currentColor;
+  border-top: none;
+  border-radius: 4rpx;
+}
+
+.icon-hall::before {
+  content: '';
+  position: absolute;
+  top: -16rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 22rpx solid transparent;
+  border-right: 22rpx solid transparent;
+  border-bottom: 16rpx solid currentColor;
+}
+
+/* 发布 - 加号图标 */
+.icon-publish {
+  width: 36rpx;
+  height: 36rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 50%;
+}
+
+.icon-publish::before,
+.icon-publish::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 2rpx;
+}
+
+.icon-publish::before {
+  width: 18rpx;
+  height: 3rpx;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon-publish::after {
+  width: 3rpx;
+  height: 18rpx;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 消息 - 气泡图标 */
+.icon-chat {
+  width: 36rpx;
+  height: 28rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 14rpx;
+}
+
+.icon-chat::after {
+  content: '';
+  position: absolute;
+  bottom: -8rpx;
+  left: 8rpx;
+  width: 0;
+  height: 0;
+  border-left: 8rpx solid transparent;
+  border-right: 4rpx solid transparent;
+  border-top: 8rpx solid currentColor;
+}
+
+/* 我的 - 人像图标 */
+.icon-profile {
+  width: 20rpx;
+  height: 20rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 50%;
+  top: 2rpx;
+}
+
+.icon-profile::after {
+  content: '';
+  position: absolute;
+  bottom: -2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36rpx;
+  height: 18rpx;
+  border: 3rpx solid currentColor;
+  border-bottom: none;
+  border-radius: 18rpx 18rpx 0 0;
+}

@@ -1,0 +1,58 @@
+.type-group {
+
+  display: flex;
+
+  gap: 32rpx;
+
+}
+
+
+
+.radio-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8rpx;
+
+  font-size: 28rpx;
+
+  color: var(--text);
+
+}
+
+
+
+.feedback-input {
+
+  min-height: 240rpx;
+
+}
+
+
+
+.char-count {
+
+  display: block;
+
+  text-align: right;
+
+  font-size: 22rpx;
+
+  color: var(--subtext);
+
+  margin-top: 8rpx;
+
+}
+
+
+
+.submit-btn {
+
+  width: 100%;
+
+  margin-top: 20rpx;
+
+}
+

@@ -1,0 +1,188 @@
+<view class="publish-page">
+  <notify-toast />
+
+  <view wx:if="{{needLogin}}" class="guest-panel">
+    <text class="guest-title">登录后发布任务</text>
+    <text class="guest-desc">未登录也可以浏览大厅，需要发布时再登录即可</text>
+    <button class="btn-primary guest-btn" bindtap="goLogin">去登录</button>
+  </view>
+
+  <block wx:else>
+    <view wx:if="{{formError}}" class="form-error">{{formError}}</view>
+
+    <view class="form-section">
+      <text class="section-head">任务类型</text>
+      <picker mode="selector" range="{{taskTypes}}" range-key="label" bindchange="onTypeChange">
+        <view class="picker-cell">
+          <text class="picker-text">{{taskTypeLabel}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-section">
+      <text class="section-head">基本信息</text>
+      <view class="field-group">
+        <text class="field-label">任务标题<text class="required">*</text></text>
+        <input class="field-input" placeholder="如 东门菜鸟驿站代取快递" data-field="title" value="{{title}}" bindinput="onInput" />
+      </view>
+      <view class="field-row">
+        <view class="field-group half">
+          <text class="field-label">赏金（元）<text class="required">*</text></text>
+          <input class="field-input" placeholder="0.00" type="digit" data-field="reward" value="{{reward}}" bindinput="onInput" />
+        </view>
+        <view class="field-group half">
+          <text class="field-label">联系电话<text class="required">*</text></text>
+          <input
+            class="field-input field-input--readonly"
+            placeholder="自动使用注册手机号"
+            type="number"
+            maxlength="11"
+            value="{{contact}}"
+            disabled
+          />
+          <text class="field-hint">自动使用注册手机号</text>
+        </view>
+      </view>
+      <view class="field-group">
+        <text class="field-label">优惠券</text>
+        <picker mode="selector" range="{{couponLabels}}" value="{{couponIndex}}" bindchange="onCouponChange">
+          <view class="picker-cell">
+            <text class="picker-text">{{couponLabels[couponIndex] || '不使用优惠券'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+        <view wx:if="{{couponDiscount > 0}}" class="coupon-pay-hint">
+          <text>券抵扣 ¥{{couponDiscountText}}</text>
+          <text class="pay-strong">赏金实付 ¥{{bountyPayableText}}</text>
+        </view>
+      </view>
+
+      <view class="field-group urgent-block">
+        <view class="urgent-head" bindtap="onToggleUrgent">
+          <view class="urgent-head-main">
+            <text class="field-label">加急（本周剩余 {{urgentRemaining}}/{{urgentWeeklyLimit}}）</text>
+            <text class="urgent-desc">提高曝光与优先被看到，不承诺准时送达</text>
+          </view>
+          <view class="urgent-switch {{urgentEnabled ? 'on' : ''}} {{urgentRemaining <= 0 ? 'disabled' : ''}}">
+            <view class="urgent-knob"></view>
+          </view>
+        </view>
+        <view wx:if="{{urgentEnabled}}" class="urgent-body">
+          <text class="urgent-tip">约 80% 给接单员，约 20% 为平台推送费 · ¥1～¥20，0.5 元步进</text>
+          <view class="urgent-chips">
+            <view
+              wx:for="{{urgentFeePresets}}"
+              wx:key="*this"
+              class="urgent-chip {{urgentFee == item ? 'active' : ''}}"
+              data-fee="{{item}}"
+              bindtap="onPickUrgentFee"
+            >¥{{item}}</view>
+          </view>
+          <view class="urgent-custom-row">
+            <text class="urgent-custom-label">自定义</text>
+            <input
+              class="field-input urgent-fee-input"
+              type="digit"
+              placeholder="如 2.5"
+              value="{{urgentFee}}"
+              bindinput="onUrgentFeeInput"
+            />
+          </view>
+          <view class="urgent-split" wx:if="{{urgentFeeValid}}">
+            <text>加急费 ¥{{urgentFeeText}}</text>
+            <text>接单员 +¥{{urgentRiderText}} · 推送费 ¥{{urgentPushText}}</text>
+          </view>
+          <view class="urgent-split total" wx:if="{{urgentFeeValid || couponDiscount > 0}}">
+            <text>预计实付</text>
+            <text class="pay-strong">¥{{payableText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-group">
+        <text class="field-label">任务描述</text>
+        <textarea class="field-textarea" placeholder="如：取件码 8888，放宿舍门口即可" data-field="description" value="{{description}}" bindinput="onInput" maxlength="500" />
+      </view>
+    </view>
+
+    <view class="form-section">
+      <text class="section-head">取送路线</text>
+      <view class="route-card">
+        <view class="route-item">
+          <view class="route-dot pickup"></view>
+          <view class="route-content">
+            <view class="route-top">
+              <text class="route-label">取件地点</text>
+              <text class="route-action" data-field="pickup" bindtap="chooseLocation">地图选点</text>
+            </view>
+            <input class="route-input" placeholder="如 东门菜鸟驿站 / 食堂二楼" data-field="pickupLocation" value="{{pickupLocation}}" bindinput="onInput" />
+          </view>
+        </view>
+        <view class="route-line"></view>
+        <view class="route-item">
+          <view class="route-dot dropoff"></view>
+          <view class="route-content">
+            <view class="route-top">
+              <text class="route-label">送达地点</text>
+              <text class="route-action" data-field="dropoff" bindtap="chooseLocation">地图选点</text>
+            </view>
+            <input class="route-input" placeholder="如 3栋 103宿舍" data-field="dropoffLocation" value="{{dropoffLocation}}" bindinput="onInput" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <text class="section-head">送达时间</text>
+      <view class="time-row">
+        <picker mode="date" value="{{deliveryDate}}" bindchange="onDeliveryDateChange">
+          <view class="picker-cell time-cell">
+            <text class="picker-text">{{deliveryDate || '选择日期'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{deliveryTime}}" bindchange="onDeliveryTimeChange">
+          <view class="picker-cell time-cell">
+            <text class="picker-text">{{deliveryTime || '选择时间'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <text class="section-head">支付方式</text>
+      <view class="pay-card active">
+        <view class="pay-main">
+          <text class="pay-title">钱包余额</text>
+          <text class="pay-desc">可用余额 ¥{{walletBalance}}</text>
+        </view>
+        <view class="pay-check">✓</view>
+      </view>
+      <text class="pay-tip">支付宝沙箱需在网页端使用，小程序暂仅支持钱包支付</text>
+    </view>
+
+    <view class="form-section">
+      <text class="section-head">图片（选填，最多3张）</text>
+      <view class="image-grid">
+        <view wx:for="{{imageUrls}}" wx:key="*this" class="thumb-wrap">
+          <image src="{{item}}" class="thumb" mode="aspectFill" />
+          <view class="thumb-remove" data-index="{{index}}" bindtap="removeImage">×</view>
+        </view>
+        <view wx:if="{{imageUrls.length < 3}}" class="add-image" bindtap="chooseImage">
+          <text class="add-plus">+</text>
+          <text class="add-text">添加</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="submit-spacer"></view>
+  </block>
+
+  <view wx:if="{{!needLogin}}" class="submit-bar">
+    <button class="submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">
+      发布任务
+    </button>
+  </view>
+</view>
