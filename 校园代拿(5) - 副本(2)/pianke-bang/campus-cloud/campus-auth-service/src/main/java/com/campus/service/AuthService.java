@@ -17,6 +17,7 @@ import com.campus.security.AdminPolicy;
 import com.campus.security.JwtService;
 import com.campus.security.LoginChannel;
 import com.campus.security.PasswordHasher;
+import com.campus.support.OssImageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class AuthService {
     private final AdminPolicy adminPolicy;
     private final ImageAuditService imageAuditService;
     private final PasswordHasher passwordHasher;
+    private final OssImageStore ossImageStore;
 
     public AuthService(
             UserAccountRepository userAccountRepository,
@@ -53,7 +55,8 @@ public class AuthService {
             SmsCodeService smsCodeService,
             AdminPolicy adminPolicy,
             ImageAuditService imageAuditService,
-            PasswordHasher passwordHasher
+            PasswordHasher passwordHasher,
+            OssImageStore ossImageStore
     ) {
         this.userAccountRepository = userAccountRepository;
         this.deliveryTaskRepository = deliveryTaskRepository;
@@ -62,6 +65,7 @@ public class AuthService {
         this.adminPolicy = adminPolicy;
         this.imageAuditService = imageAuditService;
         this.passwordHasher = passwordHasher;
+        this.ossImageStore = ossImageStore;
     }
 
     private void assertPhoneRegistrationSlotAvailable(String normalizedMobile) {
@@ -657,13 +661,14 @@ public class AuthService {
             if (!avatarUrl.isBlank() && !avatarUrl.equals(user.getAvatarUrl())) {
                 // block 拒绝；pass 自动生效；review / 降级 → 人工待审
                 ImageAuditService.AuditOutcome audit = imageAuditService.requireAvatarAudit(avatarUrl);
+                String storedAvatar = ossImageStore.storeDataUrl(avatarUrl, "avatar");
                 if (audit.verdict() == ImageAuditService.Verdict.PASS) {
-                    user.setAvatarUrl(avatarUrl);
+                    user.setAvatarUrl(storedAvatar);
                     user.setAvatarPending(false);
                     user.setPendingAvatarUrl(null);
                     avatarAutoApproved = true;
                 } else {
-                    user.setPendingAvatarUrl(avatarUrl);
+                    user.setPendingAvatarUrl(storedAvatar);
                     user.setAvatarPending(true);
                 }
             }

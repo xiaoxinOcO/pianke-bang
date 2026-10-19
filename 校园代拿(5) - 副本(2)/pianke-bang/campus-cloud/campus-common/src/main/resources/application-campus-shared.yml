@@ -130,3 +130,12 @@ app:
       public-base-url: ${IMAGE_AUDIT_PUBLIC_BASE_URL:https://api.xiaoxin1.xyz}
       # API 异常时：true=仍进入人工待审；false=拒绝本次头像提交
       fail-open: ${ALIYUN_IMAGE_AUDIT_FAIL_OPEN:true}
+    # 图片对象存储。未配齐 AK 时自动跳过，仍把 data URL 写入数据库。
+    oss:
+      enabled: ${ALIYUN_OSS_ENABLED:true}
+      endpoint: ${ALIYUN_OSS_ENDPOINT:https://oss-cn-beijing.aliyuncs.com}
+      bucket: ${ALIYUN_OSS_BUCKET:pianke-bang}
+      access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID:}
+      access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:}
+      public-base-url: ${ALIYUN_OSS_PUBLIC_BASE_URL:https://pianke-bang.oss-cn-beijing.aliyuncs.com}
+      key-prefix: ${ALIYUN_OSS_KEY_PREFIX:campus}

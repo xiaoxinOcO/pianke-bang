@@ -6,6 +6,7 @@ import com.campus.dto.UserFeedbackSubmitRequest;
 import com.campus.model.UserFeedback;
 import com.campus.repository.UserFeedbackRepository;
 import com.campus.security.AdminPolicy;
+import com.campus.support.OssImageStore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
@@ -27,15 +28,18 @@ public class UserFeedbackService {
     private final UserFeedbackRepository repository;
     private final AdminPolicy adminPolicy;
     private final ObjectMapper objectMapper;
+    private final OssImageStore ossImageStore;
 
     public UserFeedbackService(
             UserFeedbackRepository repository,
             AdminPolicy adminPolicy,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            OssImageStore ossImageStore
     ) {
         this.repository = repository;
         this.adminPolicy = adminPolicy;
         this.objectMapper = objectMapper;
+        this.ossImageStore = ossImageStore;
     }
 
     @Transactional
@@ -154,7 +158,7 @@ public class UserFeedbackService {
             if (trimmed.isEmpty()) {
                 continue;
             }
-            out.add(trimmed);
+            out.add(ossImageStore.storeDataUrl(trimmed, "feedback"));
             if (out.size() >= MAX_IMAGES) {
                 break;
             }

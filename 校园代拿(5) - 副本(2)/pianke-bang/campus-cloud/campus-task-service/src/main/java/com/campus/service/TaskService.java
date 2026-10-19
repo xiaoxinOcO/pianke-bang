@@ -18,6 +18,7 @@ import com.campus.support.CouponQuote;
 import com.campus.support.RemoteAuditLogSupport;
 import com.campus.support.RemoteSystemMessageSupport;
 import com.campus.support.TaskNotificationSupport;
+import com.campus.support.OssImageStore;
 import com.campus.support.WalletSupport;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.transaction.Transactional;
@@ -78,6 +79,7 @@ public class TaskService {
     private final boolean autoApproveAfterBounty;
     private final long abandonedPendingReviewHours;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final OssImageStore ossImageStore;
 
     public TaskService(
             DeliveryTaskRepository deliveryTaskRepository,
@@ -90,6 +92,7 @@ public class TaskService {
             TaskNotificationSupport taskNotification,
             ObjectProvider<RemoteSystemMessageSupport> systemMessageSupport,
             ObjectProvider<TaskService> self,
+            OssImageStore ossImageStore,
             @Autowired(required = false) TaskElasticsearchService taskElasticsearchService,
             @Value("${app.task.pending-confirm-auto-minutes:30}") long pendingConfirmAutoMinutes,
             @Value("${app.task.auto-approve-after-bounty:false}") boolean autoApproveAfterBounty,
@@ -109,6 +112,7 @@ public class TaskService {
         this.pendingConfirmAutoMinutes = pendingConfirmAutoMinutes;
         this.autoApproveAfterBounty = autoApproveAfterBounty;
         this.abandonedPendingReviewHours = abandonedPendingReviewHours;
+        this.ossImageStore = ossImageStore;
     }
 
     public TaskPageResponse listTasks(TaskStatus status, String taskType, String keyword, int page, int size) {
@@ -1427,6 +1431,7 @@ public class TaskService {
         List<String> cleaned = urls.stream()
                 .filter(s -> s != null && !s.isBlank())
                 .map(String::trim)
+                .map(url -> ossImageStore.storeDataUrl(url, "task"))
                 .limit(6)
                 .toList();
         try {

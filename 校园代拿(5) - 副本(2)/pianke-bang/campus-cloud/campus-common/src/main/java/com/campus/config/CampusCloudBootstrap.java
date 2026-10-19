@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({JwtProperties.class, AdminProperties.class, CampusMqProperties.class})
+@EnableConfigurationProperties({JwtProperties.class, AdminProperties.class, CampusMqProperties.class, AliyunOssProperties.class})
 public class CampusCloudBootstrap {
 
     @Bean

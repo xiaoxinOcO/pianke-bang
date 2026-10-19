@@ -33,17 +33,20 @@ public class CouponCore {
     private final UserCouponRepository userCouponRepository;
     private final CouponRedeemCodeRepository couponRedeemCodeRepository;
     private final CouponRedeemLogRepository couponRedeemLogRepository;
+    private final OssImageStore ossImageStore;
 
     public CouponCore(
             CouponTemplateRepository couponTemplateRepository,
             UserCouponRepository userCouponRepository,
             CouponRedeemCodeRepository couponRedeemCodeRepository,
-            CouponRedeemLogRepository couponRedeemLogRepository
+            CouponRedeemLogRepository couponRedeemLogRepository,
+            OssImageStore ossImageStore
     ) {
         this.couponTemplateRepository = couponTemplateRepository;
         this.userCouponRepository = userCouponRepository;
         this.couponRedeemCodeRepository = couponRedeemCodeRepository;
         this.couponRedeemLogRepository = couponRedeemLogRepository;
+        this.ossImageStore = ossImageStore;
     }
 
     public CouponQuote preview(String username, Long userCouponId, BigDecimal reward) {
@@ -235,6 +238,9 @@ public class CouponCore {
         }
         if (template.getPerUserLimit() == null || template.getPerUserLimit() < 1) {
             template.setPerUserLimit(1);
+        }
+        if (template.getBannerImageUrl() != null && !template.getBannerImageUrl().isBlank()) {
+            template.setBannerImageUrl(ossImageStore.storeDataUrl(template.getBannerImageUrl(), "banner"));
         }
         return couponTemplateRepository.save(template);
     }
@@ -690,7 +696,7 @@ public class CouponCore {
         CouponTemplate template = requireTemplate(templateId);
         if (bannerImageUrl != null) {
             String url = bannerImageUrl.trim();
-            template.setBannerImageUrl(url.isEmpty() ? null : url);
+            template.setBannerImageUrl(url.isEmpty() ? null : ossImageStore.storeDataUrl(url, "banner"));
         }
         if (bannerTheme != null) {
             String theme = bannerTheme.trim().toLowerCase();

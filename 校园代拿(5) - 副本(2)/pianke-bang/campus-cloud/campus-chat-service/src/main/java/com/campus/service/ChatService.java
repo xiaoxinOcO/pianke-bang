@@ -12,6 +12,7 @@ import com.campus.repository.ChatMessageRepository;
 import com.campus.repository.ChatReadCursorRepository;
 import com.campus.repository.DeliveryTaskRepository;
 import com.campus.repository.UserAccountRepository;
+import com.campus.support.OssImageStore;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -28,19 +29,22 @@ public class ChatService {
     private final DeliveryTaskRepository deliveryTaskRepository;
     private final UserAccountRepository userAccountRepository;
     private final RealtimePushService realtimePushService;
+    private final OssImageStore ossImageStore;
 
     public ChatService(
             ChatMessageRepository chatMessageRepository,
             ChatReadCursorRepository chatReadCursorRepository,
             DeliveryTaskRepository deliveryTaskRepository,
             UserAccountRepository userAccountRepository,
-            RealtimePushService realtimePushService
+            RealtimePushService realtimePushService,
+            OssImageStore ossImageStore
     ) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatReadCursorRepository = chatReadCursorRepository;
         this.deliveryTaskRepository = deliveryTaskRepository;
         this.userAccountRepository = userAccountRepository;
         this.realtimePushService = realtimePushService;
+        this.ossImageStore = ossImageStore;
     }
 
     @Transactional
@@ -74,7 +78,7 @@ public class ChatService {
         ChatMessage msg = new ChatMessage();
         msg.setFromUsername(me);
         msg.setToUsername(to);
-        msg.setContent(content);
+        msg.setContent(ossImageStore.rewriteChatContent(content));
         ChatMessage saved = chatMessageRepository.save(msg);
 
         // 实时推送给接收方（以及自己用于多端同步）

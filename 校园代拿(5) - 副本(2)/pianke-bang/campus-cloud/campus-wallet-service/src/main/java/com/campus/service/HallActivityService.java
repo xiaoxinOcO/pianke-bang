@@ -10,6 +10,7 @@ import com.campus.repository.HallActivityRepository;
 import com.campus.repository.UserCouponRepository;
 import com.campus.security.AuthContext;
 import com.campus.support.CouponCore;
+import com.campus.support.OssImageStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,15 +44,18 @@ public class HallActivityService {
     private final HallActivityRepository hallActivityRepository;
     private final UserCouponRepository userCouponRepository;
     private final CouponCore couponCore;
+    private final OssImageStore ossImageStore;
 
     public HallActivityService(
             HallActivityRepository hallActivityRepository,
             UserCouponRepository userCouponRepository,
-            CouponCore couponCore
+            CouponCore couponCore,
+            OssImageStore ossImageStore
     ) {
         this.hallActivityRepository = hallActivityRepository;
         this.userCouponRepository = userCouponRepository;
         this.couponCore = couponCore;
+        this.ossImageStore = ossImageStore;
     }
 
     public List<Map<String, Object>> listPublic() {
@@ -184,13 +188,13 @@ public class HallActivityService {
         a.setSubtitle(blankToNull(subtitleRaw));
         if (request.getBannerImageUrl() != null) {
             String img = request.getBannerImageUrl().trim();
-            a.setBannerImageUrl(img.isEmpty() ? null : img);
+            a.setBannerImageUrl(img.isEmpty() ? null : ossImageStore.storeDataUrl(img, "banner"));
         } else if (creating) {
             a.setBannerImageUrl(null);
         }
         if (request.getBannerImageUrlWeb() != null) {
             String imgWeb = request.getBannerImageUrlWeb().trim();
-            a.setBannerImageUrlWeb(imgWeb.isEmpty() ? null : imgWeb);
+            a.setBannerImageUrlWeb(imgWeb.isEmpty() ? null : ossImageStore.storeDataUrl(imgWeb, "banner"));
         } else if (creating) {
             a.setBannerImageUrlWeb(null);
         }
