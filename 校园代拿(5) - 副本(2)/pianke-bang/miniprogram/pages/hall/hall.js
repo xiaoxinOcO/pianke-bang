@@ -266,6 +266,14 @@ Page({
   },
 
   goNotices() {
+    const notice = this.data.topNotice
+    const linked = !!(notice && notice.linkEnabled && notice.linkPath)
+    const target = linked ? String(notice.linkPath) : '/pages/notices/notices'
+    if (!requireLogin(target.startsWith('/') ? target : '/pages/notices/notices')) return
+    if (linked) {
+      const { openMiniprogramPath } = require('../../utils/navigate')
+      if (openMiniprogramPath(notice.linkPath)) return
+    }
     wx.navigateTo({ url: '/pages/notices/notices' })
   },
 

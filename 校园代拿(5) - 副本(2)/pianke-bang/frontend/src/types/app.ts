@@ -279,6 +279,10 @@ export interface NoticeItem {
   content: string
   published: boolean
   pinned: boolean
+  /** 大厅公告条是否可点击跳转 */
+  linkEnabled?: boolean
+  /** 小程序路径，如 /pages/wallet/wallet */
+  linkPath?: string | null
   operator?: string
   createdAt: string
   updatedAt: string

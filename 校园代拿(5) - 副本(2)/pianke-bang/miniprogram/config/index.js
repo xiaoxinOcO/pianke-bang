@@ -13,10 +13,11 @@
  *   server  - 香港服务器 47.86.165.82（HTTP，仅调试）
  *   release - 正式/体验版 HTTPS 域名（微信合法域名须与此一致）
  */
-const ENV = 'release' // 上传体验版不要改！develop | server | release
+// 临时真机局域网：develop 指向本机 WLAN。上传体验版前改回 release（域名配置未删除）
+const ENV = 'develop' // develop | server | release
 
 const API_ORIGINS = {
-  develop: 'http://localhost:8080',
+  develop: 'http://10.150.199.72:8080',
   server: 'http://47.86.165.82',
   release: 'https://api.xiaoxin1.xyz'
 }
@@ -30,8 +31,8 @@ module.exports = {
   wsBase: apiOrigin.replace(/^http/, 'ws') + '/ws',
   brandName: '片刻帮',
   brandSlogan: '校园顺路代拿，省时又省心',
-  // 仅本机 develop 使用 Mock；连服务器必须用 false
-  useMock: ENV === 'develop',
+  // 临时连本机真实接口。改回纯假数据时设为 true；上传体验版前把 ENV 改回 release
+  useMock: false,
   demoAccount: ENV === 'develop' ? {
     username: 'pianke',
     password: '123456',

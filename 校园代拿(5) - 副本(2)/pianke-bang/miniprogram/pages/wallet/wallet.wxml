@@ -23,7 +23,7 @@
   <block wx:if="{{transactions.length > 0}}">
     <view wx:for="{{transactions}}" wx:key="id" class="tx-item">
       <view class="tx-head">
-        <text class="tx-type">{{item.type}}</text>
+        <text class="tx-type">{{item.typeLabel}}</text>
         <text class="tx-amount {{item.amount >= 0 ? 'income' : 'expense'}}">
           {{item.amount >= 0 ? '+' : ''}}{{item.amountText}}
         </text>

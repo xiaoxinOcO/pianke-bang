@@ -71,6 +71,7 @@ public class NoticeService {
         n.setContent(content);
         n.setPublished(request.isPublished());
         n.setPinned(request.isPinned());
+        applyLink(n, request);
         n.setOperator(operator);
         Notice saved = noticeRepository.save(n);
         adminLogService.log(operator, "NOTICE_CREATE", null, "创建公告#" + saved.getId() + "：" + title);
@@ -108,10 +109,29 @@ public class NoticeService {
         n.setContent(content);
         n.setPublished(request.isPublished());
         n.setPinned(request.isPinned());
+        applyLink(n, request);
         n.setOperator(operator);
         Notice saved = noticeRepository.save(n);
         adminLogService.log(operator, "NOTICE_UPDATE", null, "更新公告#" + saved.getId() + "：" + title);
         return saved;
+    }
+
+    private void applyLink(Notice n, NoticeUpsertRequest request) {
+        boolean enabled = request.isLinkEnabled();
+        if (!enabled) {
+            n.setLinkEnabled(false);
+            n.setLinkPath(null);
+            return;
+        }
+        String path = request.getLinkPath() == null ? "" : request.getLinkPath().trim();
+        if (path.isEmpty() || !path.startsWith("/")) {
+            throw new IllegalArgumentException("启用链接时请选择跳转页面（路径需以 / 开头）");
+        }
+        if (path.length() > 200) {
+            throw new IllegalArgumentException("跳转路径过长");
+        }
+        n.setLinkEnabled(true);
+        n.setLinkPath(path);
     }
 
     @Transactional

@@ -20,6 +20,13 @@ export type CouponsDomainDeps = {
 export function createCouponsDomain(deps: CouponsDomainDeps) {
   const myCoupons = ref<Array<Record<string, unknown>>>([])
   const myCouponsLoading = ref(false)
+  const couponClaimFocus = ref<{
+    templateId: number
+    title: string
+    subtitle: string
+    claimed: boolean
+  } | null>(null)
+  const couponClaimSubmitting = ref(false)
 
   async function fetchMyCoupons(status?: string) {
     if (!deps.isLoggedIn.value) {
@@ -63,21 +70,74 @@ export function createCouponsDomain(deps: CouponsDomainDeps) {
     }
   }
 
-  async function goCoupons() {
+  async function loadCouponClaimFocus(templateId: number) {
+    try {
+      const rows = await deps.request<Array<Record<string, unknown>>>(`${apiOrigin}/api/coupons/activities`)
+      const hit = (Array.isArray(rows) ? rows : []).find((row) => Number(row.templateId) === templateId)
+      couponClaimFocus.value = {
+        templateId,
+        title: String((hit && hit.title) || `优惠券 #${templateId}`),
+        subtitle: String((hit && hit.subtitle) || '点击即可领取'),
+        claimed: !!(hit && hit.claimed)
+      }
+    } catch {
+      couponClaimFocus.value = {
+        templateId,
+        title: `优惠券 #${templateId}`,
+        subtitle: '点击即可领取',
+        claimed: false
+      }
+    }
+  }
+
+  async function claimFocusedCoupon() {
+    const focus = couponClaimFocus.value
+    if (!focus || focus.claimed || couponClaimSubmitting.value) return
+    if (!deps.isLoggedIn.value) {
+      deps.openAuthPage('login')
+      return
+    }
+    couponClaimSubmitting.value = true
+    try {
+      const res = await deps.request<{ message?: string }>(`${apiOrigin}/api/coupons/claim/${focus.templateId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      })
+      deps.showProfileNotice(res?.message || '领取成功')
+      await Promise.all([fetchMyCoupons(), loadCouponClaimFocus(focus.templateId)])
+    } catch (err) {
+      deps.showProfileNotice((err as Error).message || '领取失败')
+      await loadCouponClaimFocus(focus.templateId)
+    } finally {
+      couponClaimSubmitting.value = false
+    }
+  }
+
+  async function goCoupons(templateId?: number) {
     if (!deps.isLoggedIn.value) {
       deps.openAuthPage('login')
       return
     }
     deps.showUserDropdown.value = false
     deps.setView('coupons')
+    const focusId = Number(templateId)
+    if (Number.isFinite(focusId) && focusId > 0) {
+      await Promise.all([fetchMyCoupons(), loadCouponClaimFocus(focusId)])
+      return
+    }
+    couponClaimFocus.value = null
     await fetchMyCoupons()
   }
 
   return {
     myCoupons,
     myCouponsLoading,
+    couponClaimFocus,
+    couponClaimSubmitting,
     fetchMyCoupons,
     redeemCouponCode,
+    claimFocusedCoupon,
     goCoupons
   }
 }

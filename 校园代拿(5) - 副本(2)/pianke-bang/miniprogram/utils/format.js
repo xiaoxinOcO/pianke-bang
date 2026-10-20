@@ -93,6 +93,8 @@ function normalizeAvatarUrl(url) {
   if (!raw) return ''
   if (raw.startsWith('data:image/')) return raw
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  // 人工客服固定头像是网页的 /logo.png，小程序资源在 /images/logo.png
+  if (raw === '/logo.png' || raw.endsWith('/logo.png')) return '/images/logo.png'
   if (raw.startsWith('/9j/')) return `data:image/jpeg;base64,${raw}`
   if (raw.startsWith('iVBOR')) return `data:image/png;base64,${raw}`
   if (raw.startsWith('UklGR')) return `data:image/webp;base64,${raw}`
@@ -116,6 +118,43 @@ function resolveUserAvatar(user) {
   return normalizeAvatarUrl(raw)
 }
 
+function walletTypeLabel(type) {
+  switch (String(type || '')) {
+    case 'TASK_INCOME':
+      return '任务入账'
+    case 'TASK_BOUNTY_LOCK':
+      return '发布任务冻结赏金'
+    case 'TASK_BOUNTY_REFUND':
+      return '任务赏金退还'
+    case 'MANUAL_BONUS':
+      return '其他收入'
+    case 'ADMIN_CREDIT':
+      return '管理员充值'
+    case 'ALIPAY_RECHARGE':
+      return '支付宝充值'
+    case 'ALIPAY_WITHDRAW':
+      return '支付宝提现'
+    case 'WITHDRAW_APPLY':
+      return '提现申请'
+    case 'WITHDRAW_APPROVE':
+      return '提现通过'
+    case 'WITHDRAW_REJECT':
+      return '提现驳回'
+    case 'TIMEOUT_COMPENSATION_DEBIT':
+      return '超时补偿扣款'
+    case 'TIMEOUT_COMPENSATION_CREDIT':
+      return '超时补偿入账'
+    case 'TIMEOUT_COMPENSATION_DEBT':
+      return '超时补偿欠款'
+    case 'TIMEOUT_COMPENSATION_DEBT_REPAY':
+      return '欠款抵扣'
+    case 'COUPON_SUBSIDY':
+      return '优惠券补贴'
+    default:
+      return type || '流水'
+  }
+}
+
 module.exports = {
   formatDateTime,
   formatTimeAgo,
@@ -127,5 +166,6 @@ module.exports = {
   combineDateTime,
   splitDateTime,
   normalizeAvatarUrl,
-  resolveUserAvatar
+  resolveUserAvatar,
+  walletTypeLabel
 }

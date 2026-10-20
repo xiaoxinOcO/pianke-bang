@@ -1,0 +1,92 @@
+<view class="chat-page">
+  <scroll-view class="message-list" scroll-y scroll-into-view="{{anchor}}" scroll-with-animation enhanced show-scrollbar="{{false}}">
+    <view class="meta-divider">
+      <text class="meta-text">智能客服</text>
+      <text class="handoff" bindtap="onTransfer">{{transferring ? '转接中…' : '转人工'}}</text>
+    </view>
+
+    <view
+      wx:for="{{messages}}"
+      wx:key="id"
+      id="m{{item.id}}"
+      class="msg-row spaced {{item.role === 'user' ? 'mine' : 'other'}}"
+    >
+      <view wx:if="{{item.role !== 'user'}}" class="avatar-slot">
+        <image class="avatar-img" src="{{botAvatar}}" mode="aspectFill" />
+      </view>
+      <view class="msg-body">
+        <view class="bubble single">
+          <text class="bubble-text" selectable>{{item.content}}</text>
+        </view>
+      </view>
+      <view wx:if="{{item.role === 'user'}}" class="avatar-slot">
+        <image wx:if="{{myAvatar}}" class="avatar-img" src="{{myAvatar}}" mode="aspectFill" />
+        <view wx:else class="avatar-letter mine">我</view>
+      </view>
+    </view>
+
+    <view wx:if="{{messages.length === 1}}" class="quick-row">
+      <text class="quick" data-text="怎么发布任务？" bindtap="onChip">怎么发布</text>
+      <text class="quick" data-text="怎么接单？" bindtap="onChip">怎么接单</text>
+      <text class="quick" data-text="钱包怎么提现？" bindtap="onChip">钱包提现</text>
+    </view>
+
+    <view wx:if="{{ratingVisible}}" class="rating-card" id="rating-card">
+      <view class="rating-head">
+        <text class="rating-title">请为本次人工客服评分</text>
+        <text class="rating-agent">客服「{{ratingAgent || '人工客服'}}」</text>
+      </view>
+      <view class="rating-stars">
+        <text
+          wx:for="{{ratingStars}}"
+          wx:key="*this"
+          class="rating-star {{ratingScore >= item ? 'on' : ''}}"
+          data-score="{{item}}"
+          bindtap="onPickScore"
+        >★</text>
+        <text class="rating-score-label">{{ratingScoreLabel}}</text>
+      </view>
+      <view class="rating-tags">
+        <text
+          wx:for="{{ratingTagItems}}"
+          wx:key="tag"
+          class="rating-tag {{item.on ? 'on' : ''}}"
+          data-tag="{{item.tag}}"
+          bindtap="onToggleTag"
+        >{{item.tag}}</text>
+      </view>
+      <textarea
+        class="rating-comment"
+        maxlength="200"
+        placeholder="想说的可以写在这里（选填）"
+        value="{{ratingComment}}"
+        bindinput="onRatingComment"
+      />
+      <view class="rating-actions">
+        <view class="rating-skip {{ratingSubmitting ? 'disabled' : ''}}" bindtap="onSkipRating">暂不评价</view>
+        <view class="rating-submit {{ratingSubmitting ? 'disabled' : ''}}" bindtap="onSubmitRating">
+          {{ratingSubmitting ? '提交中…' : '提交评价'}}
+        </view>
+      </view>
+    </view>
+
+    <view class="list-bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="composer">
+    <view class="composer-inner">
+      <input
+        class="composer-input"
+        placeholder="问问发布、接单、钱包"
+        placeholder-class="input-placeholder"
+        value="{{draft}}"
+        confirm-type="send"
+        bindinput="onInput"
+        bindconfirm="onSend"
+      />
+      <view class="send-circle {{draft && !sending ? 'active' : ''}} {{sending ? 'loading' : ''}}" bindtap="onSend">
+        <text class="send-arrow">↑</text>
+      </view>
+    </view>
+  </view>
+</view>

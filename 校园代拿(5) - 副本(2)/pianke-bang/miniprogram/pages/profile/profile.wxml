@@ -80,6 +80,15 @@
       </view>
       <text class="menu-arrow">›</text>
     </view>
+    <view class="menu-item" bindtap="goSupport">
+      <view class="menu-left">
+        <view class="menu-icon support">
+          <view class="mi-support"></view>
+        </view>
+        <text>客服</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
   </view>
 
   <button wx:if="{{isLoggedIn}}" class="btn-ghost logout-btn" bindtap="onLogout">退出登录</button>

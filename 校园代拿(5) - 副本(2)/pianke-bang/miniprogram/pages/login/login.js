@@ -1,6 +1,5 @@
 const authService = require('../../services/auth')
-const { setToken, setUser, isLoggedIn } = require('../../utils/auth')
-const { demoAccount } = require('../../config/index')
+const { setToken, setUser, isLoggedIn, setAuthRedirectLock } = require('../../utils/auth')
 const {
   validateLoginPassword,
   validateRegister,
@@ -65,7 +64,6 @@ Page({
     pickAccounts: [],
     pickToken: '',
     redirect: '',
-    demoAccount: null,
     formError: ''
   },
 
@@ -76,13 +74,6 @@ Page({
     }
     if (options.mode === 'register') {
       this.setData({ mode: 'register' })
-    }
-    if (demoAccount) {
-      this.setData({
-        demoAccount,
-        username: demoAccount.username,
-        password: demoAccount.password
-      })
     }
     if (isLoggedIn()) {
       this._navigating = true
@@ -100,18 +91,6 @@ Page({
 
   goForgotPassword() {
     wx.navigateTo({ url: '/pages/forgot-password/forgot-password' })
-  },
-
-  fillDemoAccount() {
-    const account = this.data.demoAccount
-    if (!account) return
-    this.setData({
-      mode: 'login',
-      loginType: 'password',
-      username: account.username,
-      password: account.password,
-      formError: ''
-    })
   },
 
   onInput(e) {
@@ -253,6 +232,10 @@ Page({
     realtime.seedProfileSnapshot()
 
     navigateAfterLogin(this.data.redirect)
+  },
+
+  onUnload() {
+    if (!isLoggedIn()) setAuthRedirectLock(false)
   },
 
   onSkip() {

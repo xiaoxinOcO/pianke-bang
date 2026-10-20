@@ -103,7 +103,14 @@ export function createAdminDomain(deps: AdminDomainDeps) {
 
   const adminNoticeEditorId = ref<number | null>(null)
 
-  const adminNoticeEditor = ref({ title: '', content: '', published: false, pinned: false })
+  const adminNoticeEditor = ref({
+    title: '',
+    content: '',
+    published: false,
+    pinned: false,
+    linkEnabled: false,
+    linkPath: ''
+  })
 
   const adminNoticeEditorDirty = ref(false)
 
@@ -144,6 +151,10 @@ export function createAdminDomain(deps: AdminDomainDeps) {
 
   const adminHallActivitySubmitting = ref(false)
 
+  const adminHallActivityEditingId = ref<number | null>(null)
+
+  const adminHallActivityFormError = ref('')
+
   const adminHallActivities = ref<Array<Record<string, unknown>>>([])
 
   const adminHallActivitiesLoading = ref(false)
@@ -161,6 +172,7 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     sceneCode: '',
     description: '',
     bannerTheme: 'warm',
+    bannerImageUrl: '',
     /** 0=不限期限；其余为天数（与大厅活动建券一致） */
     validDays: 7
   })
@@ -659,7 +671,9 @@ export function createAdminDomain(deps: AdminDomainDeps) {
       title: n ? String(n.title || '') : '',
       content: n ? String(n.content || '') : '',
       published: n ? !!n.published : false,
-      pinned: n ? !!n.pinned : false
+      pinned: n ? !!n.pinned : false,
+      linkEnabled: n ? !!n.linkEnabled : false,
+      linkPath: n ? String(n.linkPath || '') : ''
     }
     adminNoticeEditorDirty.value = false
   }
@@ -679,6 +693,7 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     }
     adminNoticeLoading.value = true
     try {
+      void fetchAdminCouponTemplates()
       adminNotices.value = await deps.request<NoticeItem[]>(`${apiOrigin}/api/admin/notices`)
       if (adminNoticeEditorId.value != null) {
         const latest = adminNotices.value.find((n) => n.id === adminNoticeEditorId.value) || null
@@ -695,11 +710,19 @@ export function createAdminDomain(deps: AdminDomainDeps) {
 
   async function saveAdminNotice() {
     if (!deps.isAdmin.value) return
+    const linkEnabled = !!adminNoticeEditor.value.linkEnabled
+    const linkPath = String(adminNoticeEditor.value.linkPath || '').trim()
+    if (linkEnabled && (!linkPath || !linkPath.startsWith('/'))) {
+      showAdminNotice('启用链接时请选择跳转页面')
+      return
+    }
     const payload = {
       title: String(adminNoticeEditor.value.title || '').trim(),
       content: String(adminNoticeEditor.value.content || '').trim(),
       published: !!adminNoticeEditor.value.published,
-      pinned: !!adminNoticeEditor.value.pinned
+      pinned: !!adminNoticeEditor.value.pinned,
+      linkEnabled,
+      linkPath: linkEnabled ? linkPath : null
     }
     if (!payload.title) {
       showAdminNotice('标题不能为空')
@@ -951,6 +974,7 @@ export function createAdminDomain(deps: AdminDomainDeps) {
         sceneCode: adminCouponForm.value.sceneCode.trim() || null,
         description: adminCouponForm.value.description.trim() || null,
         bannerTheme: adminCouponForm.value.bannerTheme || 'warm',
+        bannerImageUrl: adminCouponForm.value.bannerImageUrl.trim() || null,
         validFrom,
         validTo
       }
@@ -969,6 +993,7 @@ export function createAdminDomain(deps: AdminDomainDeps) {
       adminCouponForm.value.name = ''
       adminCouponForm.value.description = ''
       adminCouponForm.value.sceneCode = ''
+      adminCouponForm.value.bannerImageUrl = ''
       adminCouponForm.value.validDays = 7
       await fetchAdminCouponTemplates()
     } catch (err) {
@@ -1001,40 +1026,92 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     return '去看看'
   }
 
+  function resetAdminHallActivityForm() {
+    adminHallActivityEditingId.value = null
+    adminHallActivityFormError.value = ''
+    adminHallActivityForm.value.title = ''
+    adminHallActivityForm.value.subtitle = ''
+    adminHallActivityForm.value.ctaText = ''
+    adminHallActivityForm.value.actionType = 'RIDER_APPLY'
+    adminHallActivityForm.value.actionValue = '/pages/rider-apply/rider-apply'
+    adminHallActivityForm.value.couponTemplateId = ''
+    adminHallActivityForm.value.couponAmount = 5
+    adminHallActivityForm.value.couponValidDays = 7
+    adminHallActivityForm.value.bannerTheme = 'warm'
+    adminHallActivityForm.value.bannerImageUrl = ''
+    adminHallActivityForm.value.bannerImageUrlWeb = ''
+    adminHallActivityForm.value.sortOrder = 0
+  }
+
+  function editAdminHallActivity(row: Record<string, unknown>) {
+    const id = Number(row.id)
+    if (!Number.isFinite(id) || id <= 0) return
+    adminHallActivityFormError.value = ''
+    const actionType = String(row.actionType || 'RIDER_APPLY')
+    const couponId = Number(row.couponTemplateId)
+    adminHallActivityEditingId.value = id
+    adminHallActivityForm.value = {
+      title: String(row.title || ''),
+      subtitle: String(row.subtitle || ''),
+      ctaText: String(row.ctaText || ''),
+      actionType,
+      actionValue: String(row.actionValue || ''),
+      couponTemplateId: Number.isFinite(couponId) && couponId > 0 ? String(couponId) : '',
+      couponAmount: 5,
+      couponValidDays: 7,
+      bannerTheme: String(row.bannerTheme || 'warm'),
+      bannerImageUrl: String(row.bannerImageUrl || ''),
+      bannerImageUrlWeb: String(row.bannerImageUrlWeb || ''),
+      sortOrder: Number(row.sortOrder) || 0
+    }
+    window.requestAnimationFrame(() => {
+      document.querySelector('.admin-hall-compose')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
+  function cancelAdminHallActivityEdit() {
+    resetAdminHallActivityForm()
+  }
+
   async function createAdminHallActivity() {
     if (!deps.isAdmin.value) return
     const title = adminHallActivityForm.value.title.trim()
     if (!title) {
-      showAdminNotice('请填写活动标题（会显示在小程序轮播）')
+      adminHallActivityFormError.value = '请填写活动标题（会显示在小程序轮播）'
       return
     }
     if (title.length > 12) {
-      showAdminNotice('活动标题最多 12 字')
+      adminHallActivityFormError.value = '活动标题最多 12 字'
       return
     }
     const subtitle = adminHallActivityForm.value.subtitle.trim()
-    if (subtitle.length > 8) {
-      showAdminNotice('副文案最多 8 字')
+    if (subtitle.length > 14) {
+      adminHallActivityFormError.value = '副文案最多 14 字'
       return
     }
     const ctaText = adminHallActivityForm.value.ctaText.trim()
     if (ctaText.length > 5) {
-      showAdminNotice('按钮文案最多 5 字')
+      adminHallActivityFormError.value = '按钮文案最多 5 字'
       return
     }
+    adminHallActivityFormError.value = ''
     const actionType = adminHallActivityForm.value.actionType
+    const editingId = adminHallActivityEditingId.value
     adminHallActivitySubmitting.value = true
     try {
+      const current = editingId
+        ? adminHallActivities.value.find((item) => Number(item.id) === editingId)
+        : null
       const body: Record<string, unknown> = {
         title,
         subtitle: subtitle || null,
         ctaText: ctaText || defaultHallCta(actionType),
         actionType,
         bannerTheme: adminHallActivityForm.value.bannerTheme || 'warm',
-        bannerImageUrl: adminHallActivityForm.value.bannerImageUrl.trim() || null,
-        bannerImageUrlWeb: adminHallActivityForm.value.bannerImageUrlWeb.trim() || null,
+        bannerImageUrl: adminHallActivityForm.value.bannerImageUrl.trim(),
+        bannerImageUrlWeb: adminHallActivityForm.value.bannerImageUrlWeb.trim(),
         sortOrder: Number(adminHallActivityForm.value.sortOrder) || 0,
-        status: 'ACTIVE'
+        status: String(current?.status || 'ACTIVE')
       }
       if (actionType === 'CUSTOM_PATH') {
         body.actionValue = adminHallActivityForm.value.actionValue.trim()
@@ -1049,22 +1126,22 @@ export function createAdminDomain(deps: AdminDomainDeps) {
           body.couponValidDays = Number.isFinite(days) ? days : 7
         }
       }
-      await deps.request(`${apiOrigin}/api/admin/hall-activities`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-      showAdminNotice('活动已上线，小程序与网页大厅轮播中可见')
-      adminHallActivityForm.value.title = ''
-      adminHallActivityForm.value.subtitle = ''
-      adminHallActivityForm.value.ctaText = ''
-      adminHallActivityForm.value.actionValue = ''
-      adminHallActivityForm.value.bannerImageUrl = ''
-      adminHallActivityForm.value.bannerImageUrlWeb = ''
+      await deps.request(
+        editingId
+          ? `${apiOrigin}/api/admin/hall-activities/${editingId}`
+          : `${apiOrigin}/api/admin/hall-activities`,
+        {
+          method: editingId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
+      )
+      showAdminNotice(editingId ? '活动已更新' : '活动已上线，小程序与网页大厅轮播中可见')
+      resetAdminHallActivityForm()
       adminCouponTab.value = 'activity'
       await fetchAdminHallActivities()
     } catch (err) {
-      showAdminNotice((err as Error).message || '创建活动失败')
+      adminHallActivityFormError.value = (err as Error).message || (editingId ? '更新活动失败' : '创建活动失败')
     } finally {
       adminHallActivitySubmitting.value = false
     }
@@ -1094,6 +1171,9 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     if (!window.confirm('确定删除该大厅活动？')) return
     try {
       await deps.request(`${apiOrigin}/api/admin/hall-activities/${activityId}`, { method: 'DELETE' })
+      if (adminHallActivityEditingId.value === activityId) {
+        resetAdminHallActivityForm()
+      }
       showAdminNotice('活动已删除')
       await fetchAdminHallActivities()
     } catch (err) {
@@ -1211,6 +1291,53 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     void updateAdminCouponTemplateTheme(templateId, el.value)
   }
 
+  async function onAdminCouponBannerSelected(event: Event) {
+    const input = event.target as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
+    try {
+      adminCouponForm.value.bannerImageUrl = await deps.compressImageForChat(file)
+    } catch (err) {
+      showAdminNotice((err as Error).message || '背景图处理失败')
+    } finally {
+      input.value = ''
+    }
+  }
+
+  async function updateAdminCouponTemplateBanner(
+    templateId: number | string,
+    bannerImageUrl: string | null
+  ) {
+    if (!deps.isAdmin.value) return
+    const id = Number(templateId)
+    if (!Number.isFinite(id) || id <= 0) return
+    try {
+      await deps.request(`${apiOrigin}/api/admin/coupons/templates/${id}/banner`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bannerImageUrl: bannerImageUrl == null ? '' : bannerImageUrl })
+      })
+      showAdminNotice(bannerImageUrl ? '券面背景已更新' : '券面背景已清除')
+      await fetchAdminCouponTemplates()
+    } catch (err) {
+      showAdminNotice((err as Error).message || '更新背景失败')
+    }
+  }
+
+  async function onAdminCouponTemplateBannerSelected(templateId: number | string, event: Event) {
+    const input = event.target as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
+    try {
+      const url = await deps.compressImageForChat(file)
+      await updateAdminCouponTemplateBanner(templateId, url)
+    } catch (err) {
+      showAdminNotice((err as Error).message || '背景图处理失败')
+    } finally {
+      input.value = ''
+    }
+  }
+
   function copyTextAdmin(text: string) {
     if (!text) return
     void navigator.clipboard.writeText(text).then(
@@ -1319,7 +1446,7 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     if (!deps.isAdmin.value) return
     const id = Number(templateId)
     if (!Number.isFinite(id) || id <= 0) return
-    if (!window.confirm('确定删除该优惠券模板？已发给用户的券模板无法删除，可改用「停用领取」。')) return
+    if (!window.confirm('确定删除该优惠券模板？用户已领取且未使用的券会立即失效，不能再抵扣。')) return
     try {
       await deps.request(`${apiOrigin}/api/admin/coupons/templates/${id}`, { method: 'DELETE' })
       showAdminNotice('模板已删除')
@@ -1894,6 +2021,8 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     adminCouponTab,
     adminHallActivityForm,
     adminHallActivitySubmitting,
+    adminHallActivityEditingId,
+    adminHallActivityFormError,
     adminHallActivities,
     adminHallActivitiesLoading,
     adminCouponForm,
@@ -1964,6 +2093,8 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     fetchAdminHallActivities,
     defaultHallCta,
     createAdminHallActivity,
+    editAdminHallActivity,
+    cancelAdminHallActivityEdit,
     setAdminHallActivityStatus,
     deleteAdminHallActivity,
     onAdminHallActivityBannerSelected,
@@ -1976,6 +2107,9 @@ export function createAdminDomain(deps: AdminDomainDeps) {
     adminCouponTemplateName,
     updateAdminCouponTemplateTheme,
     onAdminCouponThemeChange,
+    onAdminCouponBannerSelected,
+    onAdminCouponTemplateBannerSelected,
+    updateAdminCouponTemplateBanner,
     copyTextAdmin,
     issueAdminCoupon,
     generateAdminCouponRedeemCodes,

@@ -293,6 +293,7 @@ view, text, button, input, textarea {
 .menu-icon.rider { background: #eefaf2; }
 .menu-icon.notice { background: #fff8e6; }
 .menu-icon.feedback { background: #f0eef8; }
+.menu-icon.support { background: #e7f4fb; }
 
 .menu-arrow {
   color: var(--subtext);

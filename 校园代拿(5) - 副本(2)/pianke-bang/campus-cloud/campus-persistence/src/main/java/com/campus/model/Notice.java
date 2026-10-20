@@ -26,6 +26,14 @@ public class Notice {
     @Column(nullable = false)
     private boolean pinned = false;
 
+    /** 大厅公告条点击是否跳转页面 */
+    @Column(nullable = false)
+    private boolean linkEnabled = false;
+
+    /** 小程序路径，如 /pages/wallet/wallet */
+    @Column(length = 200)
+    private String linkPath;
+
     @Column(length = 50)
     private String operator;
 
@@ -71,6 +79,22 @@ public class Notice {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public boolean isLinkEnabled() {
+        return linkEnabled;
+    }
+
+    public void setLinkEnabled(boolean linkEnabled) {
+        this.linkEnabled = linkEnabled;
+    }
+
+    public String getLinkPath() {
+        return linkPath;
+    }
+
+    public void setLinkPath(String linkPath) {
+        this.linkPath = linkPath;
     }
 
     public String getOperator() {

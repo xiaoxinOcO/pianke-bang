@@ -39,7 +39,7 @@ export type HallDomainDeps = {
   openAuthPage: (mode: 'login' | 'register') => void
   showProfileNotice: (text: string) => void
   goWallet: () => void | Promise<void>
-  goCoupons: () => void | Promise<void>
+  goCoupons: (templateId?: number) => void | Promise<void>
 }
 
 type HeroPromoSlide = {
@@ -176,6 +176,71 @@ export function createHallDomain(deps: HallDomainDeps) {
       hallNoticeActiveId.value = n.id
     }
     hallNoticeExpanded.value = true
+  }
+
+  function openNoticeLinkPath(rawPath: string) {
+    const raw = String(rawPath || '').trim()
+    const path = raw.split('?')[0]
+    const query = raw.includes('?') ? raw.slice(raw.indexOf('?') + 1) : ''
+    if (!path) return false
+    if (path === '/pages/hall/hall') {
+      deps.setView('hall')
+      return true
+    }
+    if (path === '/pages/publish/publish') {
+      deps.setView('publish')
+      return true
+    }
+    if (path === '/pages/chat/chat') {
+      deps.setView('chat')
+      return true
+    }
+    if (path === '/pages/profile/profile') {
+      deps.setView('profile')
+      return true
+    }
+    if (path === '/pages/rider-apply/rider-apply') {
+      if (!deps.isLoggedIn.value) {
+        deps.openAuthPage('login')
+        return true
+      }
+      deps.setView('riderApply')
+      return true
+    }
+    if (path === '/pages/wallet/wallet') {
+      if (!deps.isLoggedIn.value) {
+        deps.openAuthPage('login')
+        return true
+      }
+      void deps.goWallet()
+      return true
+    }
+    if (
+      path === '/pages/coupon-center/coupon-center' ||
+      path === '/pages/coupons/coupons'
+    ) {
+      const focus = new URLSearchParams(query).get('focus') || ''
+      const matched = /^template-(\d+)$/.exec(focus)
+      const templateId = matched ? Number(matched[1]) : undefined
+      void deps.goCoupons(templateId)
+      return true
+    }
+    if (path === '/pages/feedback/feedback') {
+      deps.setView('feedback')
+      return true
+    }
+    if (path === '/pages/login/login') {
+      deps.openAuthPage('login')
+      return true
+    }
+    deps.showProfileNotice('该公告链接请在小程序中打开')
+    return false
+  }
+
+  function openActiveHallNoticeLink() {
+    const notice = hallTopNotice.value
+    if (!notice || !notice.linkEnabled || !notice.linkPath) return
+    openNoticeLinkPath(String(notice.linkPath))
   }
 
   function onPublicNoticesLoaded() {
@@ -919,6 +984,7 @@ export function createHallDomain(deps: HallDomainDeps) {
     goToHallNotice,
     toggleHallNoticeExpanded,
     activateHallNotice,
+    openActiveHallNoticeLink,
     onPublicNoticesLoaded,
     setupNoticeMarqueeObserver,
     disposeHallNoticeUi,

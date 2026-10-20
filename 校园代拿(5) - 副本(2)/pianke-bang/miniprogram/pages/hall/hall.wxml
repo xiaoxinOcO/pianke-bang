@@ -11,7 +11,7 @@
     </view>
 
     <view wx:if="{{topNotice}}" class="notice-strip" bindtap="goNotices">
-      <text class="notice-tag">公告</text>
+      <text class="notice-tag">{{topNotice.linkEnabled ? '链接' : '公告'}}</text>
       <text class="notice-text">{{topNotice.title}}</text>
       <text class="notice-arrow">›</text>
     </view>

@@ -13,8 +13,12 @@ public class UserCoupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "template_id", nullable = false)
+    @Column(name = "template_id")
     private Long templateId;
+
+    /** 模板被删除后，列表仍显示这个名称 */
+    @Column(name = "snapshot_name", length = 80)
+    private String snapshotName;
 
     @Column(nullable = false, length = 50)
     private String username;
@@ -40,6 +44,9 @@ public class UserCoupon {
 
     public Long getTemplateId() { return templateId; }
     public void setTemplateId(Long templateId) { this.templateId = templateId; }
+
+    public String getSnapshotName() { return snapshotName; }
+    public void setSnapshotName(String snapshotName) { this.snapshotName = snapshotName; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }

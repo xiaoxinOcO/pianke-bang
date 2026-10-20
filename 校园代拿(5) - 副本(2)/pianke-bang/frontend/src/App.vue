@@ -62,6 +62,8 @@ const {
   goLoginFromKickedDialog,
   goToHallNotice,
   goToHeroPromo,
+  hallTopNotice,
+  openActiveHallNoticeLink,
   hallNoticeBannerText,
   hallNoticeCarouselIndex,
   hallTaskEmoji,
@@ -159,12 +161,23 @@ const {
     <div
       v-if="currentView === 'hall' && noticeBarVisible && hallNoticeBannerText"
       class="pk-notice-bar"
-      :class="{ 'has-multiple': hasMultipleHallNotices }"
+      :class="{
+        'has-multiple': hasMultipleHallNotices,
+        'is-link': !!(hallTopNotice && hallTopNotice.linkEnabled && hallTopNotice.linkPath)
+      }"
       @mouseenter="pauseNoticeCarousel()"
       @mouseleave="resumeNoticeCarousel()"
     >
       <span class="pk-notice-badge">公告</span>
-      <div ref="noticeTrackRef" class="pk-notice-track">
+      <div
+        ref="noticeTrackRef"
+        class="pk-notice-track"
+        :class="{ 'is-clickable': !!(hallTopNotice && hallTopNotice.linkEnabled && hallTopNotice.linkPath) }"
+        role="button"
+        :tabindex="hallTopNotice && hallTopNotice.linkEnabled && hallTopNotice.linkPath ? 0 : -1"
+        @click="openActiveHallNoticeLink()"
+        @keydown.enter.prevent="openActiveHallNoticeLink()"
+      >
         <div class="pk-notice-carousel">
           <Transition name="pk-notice-switch" mode="out-in">
             <div

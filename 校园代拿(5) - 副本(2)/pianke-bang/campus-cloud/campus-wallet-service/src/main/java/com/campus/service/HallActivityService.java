@@ -177,8 +177,8 @@ public class HallActivityService {
             throw new IllegalArgumentException("活动标题最多 12 字");
         }
         String subtitleRaw = request.getSubtitle() == null ? "" : request.getSubtitle().trim();
-        if (subtitleRaw.length() > 8) {
-            throw new IllegalArgumentException("副文案最多 8 字");
+        if (subtitleRaw.length() > 14) {
+            throw new IllegalArgumentException("副文案最多 14 字");
         }
         String action = request.getActionType() == null ? "" : request.getActionType().trim().toUpperCase();
         if (!ACTIONS.contains(action)) {

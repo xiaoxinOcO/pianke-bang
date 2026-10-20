@@ -123,7 +123,8 @@
 .mi-coupon,
 .mi-rider,
 .mi-notice,
-.mi-feedback {
+.mi-feedback,
+.mi-support {
   position: relative;
 }
 
@@ -235,4 +236,35 @@
   color: #7b6bb5;
   font-weight: 700;
   line-height: 1;
+}
+
+.mi-support {
+  width: 22rpx;
+  height: 18rpx;
+  border: 3rpx solid #1a8fb8;
+  border-radius: 8rpx 8rpx 8rpx 4rpx;
+}
+
+.mi-support::before {
+  content: '';
+  position: absolute;
+  left: -7rpx;
+  top: 2rpx;
+  width: 6rpx;
+  height: 10rpx;
+  border: 3rpx solid #1a8fb8;
+  border-right: none;
+  border-radius: 8rpx 0 0 8rpx;
+}
+
+.mi-support::after {
+  content: '';
+  position: absolute;
+  right: -7rpx;
+  top: 2rpx;
+  width: 6rpx;
+  height: 10rpx;
+  border: 3rpx solid #1a8fb8;
+  border-left: none;
+  border-radius: 0 8rpx 8rpx 0;
 }

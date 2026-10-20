@@ -139,31 +139,37 @@ Page({
   },
 
   goWallet() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/wallet/wallet')) return
     wx.navigateTo({ url: '/pages/wallet/wallet' })
   },
 
   goCoupons() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/coupons/coupons')) return
     wx.navigateTo({ url: '/pages/coupons/coupons' })
   },
 
   goMine() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/mine/mine')) return
     wx.navigateTo({ url: '/pages/mine/mine' })
   },
 
   goRiderApply() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/rider-apply/rider-apply')) return
     wx.navigateTo({ url: '/pages/rider-apply/rider-apply' })
   },
 
   goFeedback() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/feedback/feedback')) return
     wx.navigateTo({ url: '/pages/feedback/feedback' })
   },
 
+  goSupport() {
+    if (!requireLogin('/pages/support/support')) return
+    wx.navigateTo({ url: '/pages/support/support' })
+  },
+
   goNotices() {
+    if (!requireLogin('/pages/notices/notices')) return
     wx.navigateTo({ url: '/pages/notices/notices' })
   },
 

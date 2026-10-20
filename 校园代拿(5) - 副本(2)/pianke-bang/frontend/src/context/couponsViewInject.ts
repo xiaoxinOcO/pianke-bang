@@ -19,8 +19,16 @@ export interface UserCouponRow {
 export interface CouponsViewInject {
   myCoupons: UserCouponRow[]
   myCouponsLoading: boolean
+  couponClaimFocus?: {
+    templateId: number
+    title: string
+    subtitle: string
+    claimed: boolean
+  } | null
+  couponClaimSubmitting?: boolean
   fetchMyCoupons?: (status?: string) => void | Promise<void>
   redeemCouponCode?: (code: string) => void | Promise<void>
+  claimFocusedCoupon?: () => void | Promise<void>
   goHall?: () => void
   goPublish?: () => void
   normalizeImageUrl?: (url?: string) => string

@@ -5,6 +5,8 @@ public class NoticeUpsertRequest {
     private String content;
     private boolean published;
     private boolean pinned;
+    private boolean linkEnabled;
+    private String linkPath;
 
     public String getTitle() {
         return title;
@@ -36,6 +38,22 @@ public class NoticeUpsertRequest {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public boolean isLinkEnabled() {
+        return linkEnabled;
+    }
+
+    public void setLinkEnabled(boolean linkEnabled) {
+        this.linkEnabled = linkEnabled;
+    }
+
+    public String getLinkPath() {
+        return linkPath;
+    }
+
+    public void setLinkPath(String linkPath) {
+        this.linkPath = linkPath;
     }
 }
 

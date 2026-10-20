@@ -2761,7 +2761,11 @@ function taskStatusLabel(code: string) {
                 v-for="t in r.adminHallActivities"
                 :key="`ha-${t.id}`"
                 class="admin-hall-activity-row"
-                :class="{ 'is-active': t.status === 'ACTIVE', 'is-hidden': t.status !== 'ACTIVE' }"
+                :class="{
+                  'is-active': t.status === 'ACTIVE',
+                  'is-hidden': t.status !== 'ACTIVE',
+                  'is-editing': r.adminHallActivityEditingId === t.id
+                }"
               >
                 <div class="admin-hall-activity-thumb" :class="`theme-${t.bannerTheme || 'warm'}`">
                   <img
@@ -2788,6 +2792,9 @@ function taskStatusLabel(code: string) {
                   </div>
                 </div>
                 <div class="admin-hall-activity-ops">
+                  <button type="button" class="ghost-local" @click="r.editAdminHallActivity(t)">
+                    {{ r.adminHallActivityEditingId === t.id ? '编辑中' : '更改' }}
+                  </button>
                   <button
                     v-if="t.status !== 'ACTIVE'"
                     type="button"
@@ -2810,18 +2817,46 @@ function taskStatusLabel(code: string) {
           <section class="admin-hall-compose">
             <div class="admin-hall-compose-head">
               <div>
-                <h3>添加活动</h3>
-                <p class="meta">先选活动类型，再配标题 / 按钮文案 / 海报，发布后出现在小程序与网页大厅轮播。</p>
+                <h3>{{ r.adminHallActivityEditingId ? '更改活动' : '添加活动' }}</h3>
+                <p class="meta">
+                  {{
+                    r.adminHallActivityEditingId
+                      ? '正在编辑已有活动，保存后会更新小程序与网页大厅轮播。'
+                      : '先选活动类型，再配标题 / 按钮文案 / 海报，发布后出现在小程序与网页大厅轮播。'
+                  }}
+                </p>
               </div>
-              <button
-                type="button"
-                class="primary admin-hall-publish-btn"
-                :disabled="r.adminHallActivitySubmitting"
-                @click="r.createAdminHallActivity"
-              >
-                {{ r.adminHallActivitySubmitting ? '发布中…' : '发布到大厅轮播' }}
-              </button>
+              <div class="admin-hall-compose-actions">
+                <button
+                  v-if="r.adminHallActivityEditingId"
+                  type="button"
+                  class="ghost-local"
+                  :disabled="r.adminHallActivitySubmitting"
+                  @click="r.cancelAdminHallActivityEdit"
+                >
+                  取消编辑
+                </button>
+                <button
+                  type="button"
+                  class="primary admin-hall-publish-btn"
+                  :disabled="r.adminHallActivitySubmitting"
+                  @click="r.createAdminHallActivity"
+                >
+                  {{
+                    r.adminHallActivitySubmitting
+                      ? r.adminHallActivityEditingId
+                        ? '保存中…'
+                        : '发布中…'
+                      : r.adminHallActivityEditingId
+                        ? '保存更改'
+                        : '发布到大厅轮播'
+                  }}
+                </button>
+              </div>
             </div>
+            <p v-if="r.adminHallActivityFormError" class="admin-hall-form-error" role="alert">
+              {{ r.adminHallActivityFormError }}
+            </p>
 
             <div class="admin-hall-compose-body">
               <div class="task-form admin-hall-compose-fields">
@@ -2853,10 +2888,10 @@ function taskStatusLabel(code: string) {
                   <input
                     v-model="r.adminHallActivityForm.subtitle"
                     placeholder="如：认证后接单"
-                    maxlength="8"
+                    maxlength="14"
                   />
                   <p class="meta admin-upload-hint">
-                    最多 8 字（{{ r.adminHallActivityForm.subtitle.length }}/8）
+                    最多 14 字（{{ r.adminHallActivityForm.subtitle.length }}/14）
                   </p>
                 </label>
                 <label class="form-field-row">
@@ -3002,12 +3037,29 @@ function taskStatusLabel(code: string) {
                 </div>
 
                 <button
+                  v-if="r.adminHallActivityEditingId"
+                  type="button"
+                  class="ghost-local admin-hall-publish-btn--mobile"
+                  :disabled="r.adminHallActivitySubmitting"
+                  @click="r.cancelAdminHallActivityEdit"
+                >
+                  取消编辑
+                </button>
+                <button
                   type="button"
                   class="primary admin-hall-publish-btn admin-hall-publish-btn--mobile"
                   :disabled="r.adminHallActivitySubmitting"
                   @click="r.createAdminHallActivity"
                 >
-                  {{ r.adminHallActivitySubmitting ? '发布中…' : '发布到大厅轮播' }}
+                  {{
+                    r.adminHallActivitySubmitting
+                      ? r.adminHallActivityEditingId
+                        ? '保存中…'
+                        : '发布中…'
+                      : r.adminHallActivityEditingId
+                        ? '保存更改'
+                        : '发布到大厅轮播'
+                  }}
                 </button>
               </aside>
             </div>
@@ -3057,8 +3109,11 @@ function taskStatusLabel(code: string) {
                 }"
               >
                 <div class="admin-coupon-template-swatch" :class="`theme-${t.bannerTheme || 'warm'}`">
-                  <strong>{{ couponThemeLabel(t.bannerTheme) }}</strong>
-                  <span>{{ couponTemplateBrief(t) }}</span>
+                  <img v-if="t.bannerImageUrl" :src="String(t.bannerImageUrl)" alt="" />
+                  <template v-else>
+                    <strong>{{ couponThemeLabel(t.bannerTheme) }}</strong>
+                    <span>{{ couponTemplateBrief(t) }}</span>
+                  </template>
                 </div>
                 <div class="admin-coupon-template-main">
                   <div class="admin-coupon-template-title-row">
@@ -3113,6 +3168,23 @@ function taskStatusLabel(code: string) {
                     <option value="green">清新绿</option>
                     <option value="blue">靛蓝</option>
                   </select>
+                  <label class="ghost-local admin-coupon-banner-upload">
+                    {{ t.bannerImageUrl ? '换背景' : '上传背景' }}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      @change="r.onAdminCouponTemplateBannerSelected(t.id, $event)"
+                    />
+                  </label>
+                  <button
+                    v-if="t.bannerImageUrl"
+                    type="button"
+                    class="ghost-local"
+                    @click="r.updateAdminCouponTemplateBanner(t.id, null)"
+                  >
+                    清除背景
+                  </button>
                 </div>
               </li>
             </ul>
@@ -3196,7 +3268,7 @@ function taskStatusLabel(code: string) {
                 <input v-model.number="r.adminCouponForm.totalStock" type="number" min="0" step="1" />
               </label>
               <label class="form-field-row">
-                <span>默认主题色</span>
+                <span>默认主题色（无背景图时）</span>
                 <select v-model="r.adminCouponForm.bannerTheme">
                   <option value="warm">暖橙</option>
                   <option value="cool">冰蓝</option>
@@ -3204,6 +3276,19 @@ function taskStatusLabel(code: string) {
                   <option value="blue">靛蓝</option>
                 </select>
               </label>
+              <div class="form-field-row admin-hall-span-2">
+                <span>券面背景图（可选）</span>
+                <input type="file" accept="image/*" @change="r.onAdminCouponBannerSelected($event)" />
+                <p class="meta admin-upload-hint">
+                  推荐宽图约 750×320，jpg/png；上传后用户「我的优惠券」会显示该背景
+                </p>
+                <div v-if="r.adminCouponForm.bannerImageUrl" class="admin-coupon-preview">
+                  <img :src="r.adminCouponForm.bannerImageUrl" alt="券面背景预览" />
+                  <button type="button" class="ghost-local" @click="r.adminCouponForm.bannerImageUrl = ''">
+                    清除
+                  </button>
+                </div>
+              </div>
               <label class="form-field-row">
                 <span>优惠券有效期</span>
                 <select v-model.number="r.adminCouponForm.validDays">
@@ -3542,12 +3627,16 @@ function taskStatusLabel(code: string) {
                   <h3 style="font-size:16px;">{{ n.title }}</h3>
                   <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
                     <span v-if="n.pinned" class="status status-pending_confirmation">置顶</span>
+                    <span v-if="n.linkEnabled" class="status status-claimed">链接</span>
                     <span class="status" :class="n.published ? 'status-completed' : 'status-cancelled'">
                       {{ n.published ? '已上架' : '未上架' }}
                     </span>
                   </div>
                 </div>
-                <p class="meta" style="margin-top:6px;">更新：{{ n.updatedAt }}</p>
+                <p class="meta" style="margin-top:6px;">
+                  更新：{{ n.updatedAt }}
+                  <span v-if="n.linkEnabled && n.linkPath"> · 跳转 {{ n.linkPath }}</span>
+                </p>
               </li>
             </ul>
           </aside>
@@ -3582,7 +3671,41 @@ function taskStatusLabel(code: string) {
                   <small>前台可见</small>
                 </span>
               </label>
+              <label class="admin-flag-item">
+                <input type="checkbox" v-model="r.adminNoticeEditor.linkEnabled" @change="r.adminNoticeEditorDirty = true" />
+                <span class="admin-flag-text">
+                  <strong>点击跳转</strong>
+                  <small>大厅公告条点击后进入指定页面</small>
+                </span>
+              </label>
             </div>
+            <label v-if="r.adminNoticeEditor.linkEnabled" class="form-field-row" style="margin:12px 0;">
+              <span>跳转页面</span>
+              <select v-model="r.adminNoticeEditor.linkPath" @change="r.adminNoticeEditorDirty = true">
+                <option disabled value="">请选择跳转目标</option>
+                <optgroup label="功能页面">
+                  <option
+                    v-for="p in r.miniprogramPageOptions.filter((x) => !x.needsQuery)"
+                    :key="`notice-link-${p.path}`"
+                    :value="p.path"
+                  >
+                    {{ p.name }}（{{ p.path }}）
+                  </option>
+                </optgroup>
+                <optgroup label="领取指定优惠券">
+                  <option
+                    v-for="t in r.adminCouponTemplates"
+                    :key="`notice-coupon-${t.id}`"
+                    :value="`/pages/coupon-center/coupon-center?focus=template-${t.id}`"
+                  >
+                    领取：{{ t.name }}（#{{ t.id }}）
+                  </option>
+                </optgroup>
+              </select>
+              <p class="meta admin-upload-hint" style="margin:6px 0 0;">
+                选「领取指定优惠券」后，点击公告会打开领券中心并定位到该券。
+              </p>
+            </label>
             <div class="actions" style="justify-content:flex-end;">
               <button class="ghost-local" type="button" @click="r.adminNoticeEditorId != null && r.adminSelectedNotice ? r.resetAdminNoticeEditor(r.adminSelectedNotice) : r.resetAdminNoticeEditor(null)">
                 重置
@@ -4550,6 +4673,26 @@ function taskStatusLabel(code: string) {
 .admin-hall-activity-row.is-hidden {
   opacity: 0.78;
 }
+.admin-hall-activity-row.is-editing {
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+}
+.admin-hall-compose-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.admin-hall-form-error {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #b42318;
+  border: 1px solid rgba(180, 35, 24, 0.28);
+  font-size: 14px;
+  font-weight: 600;
+}
 .admin-hall-activity-thumb {
   width: 148px;
   height: 72px;
@@ -4743,6 +4886,20 @@ function taskStatusLabel(code: string) {
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
+  position: relative;
+}
+.admin-coupon-template-swatch img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.admin-coupon-banner-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 .admin-coupon-template-swatch strong {
   font-size: 14px;

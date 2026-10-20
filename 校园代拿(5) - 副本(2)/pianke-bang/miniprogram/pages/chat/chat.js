@@ -166,7 +166,9 @@ Page({
         noticeService.fetchSystemMessages().catch(() => ({ messages: [], unreadCount: 0 }))
       ])
 
-      const baseList = (Array.isArray(contacts) ? contacts : []).map(item => ({
+      const baseList = (Array.isArray(contacts) ? contacts : [])
+        .filter(item => !item.customerServiceStaff)
+        .map(item => ({
         ...item,
         unread: 0,
         contactPreview: '',

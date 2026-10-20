@@ -181,6 +181,21 @@ function couponBannerStyle(item: Record<string, unknown>) {
       </div>
     </header>
 
+    <section v-if="r.couponClaimFocus" class="pk-coupons-focus" aria-label="指定优惠券">
+      <div>
+        <strong>{{ r.couponClaimFocus.title }}</strong>
+        <p>{{ r.couponClaimFocus.subtitle }}</p>
+      </div>
+      <button
+        type="button"
+        class="pk-btn pk-btn-accent pk-btn-sm"
+        :disabled="r.couponClaimFocus.claimed || r.couponClaimSubmitting"
+        @click="r.claimFocusedCoupon?.()"
+      >
+        {{ r.couponClaimFocus.claimed ? '已领取' : r.couponClaimSubmitting ? '领取中…' : '立即领取' }}
+      </button>
+    </section>
+
     <section class="pk-coupons-redeem" aria-label="兑换码">
       <div class="pk-redeem-row">
         <span class="pk-redeem-tag">兑换码</span>
@@ -312,6 +327,26 @@ function couponBannerStyle(item: Record<string, unknown>) {
   justify-content: flex-end;
 }
 
+.pk-coupons-focus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #fff7ed;
+  border: 1px solid rgba(234, 88, 12, 0.28);
+}
+.pk-coupons-focus strong {
+  display: block;
+  font-size: 16px;
+}
+.pk-coupons-focus p {
+  margin: 4px 0 0;
+  color: #9a3412;
+  font-size: 13px;
+}
 .pk-coupons-redeem {
   margin-bottom: 14px;
   padding: 10px;

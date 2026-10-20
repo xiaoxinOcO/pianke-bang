@@ -208,10 +208,14 @@ export interface AdminShellInject {
     sortOrder: number
   }
   adminHallActivitySubmitting: boolean
+  adminHallActivityEditingId: number | null
+  adminHallActivityFormError: string
   adminHallActivities: Array<Record<string, unknown>>
   adminHallActivitiesLoading: boolean
   fetchAdminHallActivities: () => void | Promise<void>
   createAdminHallActivity: () => void | Promise<void>
+  editAdminHallActivity: (row: Record<string, unknown>) => void
+  cancelAdminHallActivityEdit: () => void
   setAdminHallActivityStatus: (id: number | string, status: 'ACTIVE' | 'OFF') => void | Promise<void>
   deleteAdminHallActivity: (id: number | string) => void | Promise<void>
   hallActionTypeLabel: (type: unknown) => string
@@ -249,6 +253,7 @@ export interface AdminShellInject {
     sceneCode: string
     description: string
     bannerTheme: string
+    bannerImageUrl: string
     /** 0=不限期限；其余为天数 */
     validDays: number
   }
@@ -269,6 +274,9 @@ export interface AdminShellInject {
   fetchAdminCouponRedeemCodes: () => void | Promise<void>
   adminCouponTemplateName: (id: unknown) => string
   onAdminCouponThemeChange: (templateId: number | string, event: Event) => void
+  onAdminCouponBannerSelected: (event: Event) => void | Promise<void>
+  onAdminCouponTemplateBannerSelected: (templateId: number | string, event: Event) => void | Promise<void>
+  updateAdminCouponTemplateBanner: (templateId: number | string, bannerImageUrl: string | null) => void | Promise<void>
   copyTextAdmin: (text: string) => void
   setAdminCouponTemplateStatus: (templateId: number | string, status: 'ACTIVE' | 'OFF') => void | Promise<void>
   deleteAdminCouponTemplate: (templateId: number | string) => void | Promise<void>
@@ -289,7 +297,14 @@ export interface AdminShellInject {
   adminNotices: NoticeItem[]
   adminNoticeEditorId: number | null
   selectAdminNotice: (n: NoticeItem) => void
-  adminNoticeEditor: { title: string; content: string; published: boolean; pinned: boolean }
+  adminNoticeEditor: {
+    title: string
+    content: string
+    published: boolean
+    pinned: boolean
+    linkEnabled: boolean
+    linkPath: string
+  }
   adminNoticeEditorDirty: boolean
   resetAdminNoticeEditor: (n: NoticeItem | null) => void
   saveAdminNotice: () => void | Promise<void>

@@ -105,6 +105,14 @@ body:has(.app-shell--piankebang) #app::after {
   align-items: stretch;
 }
 
+.app-shell--piankebang .pk-notice-track.is-clickable {
+  cursor: pointer;
+}
+
+.app-shell--piankebang .pk-notice-bar.is-link .pk-notice-badge {
+  background: #2563eb;
+}
+
 .app-shell--piankebang .pk-notice-carousel {
   width: 100%;
   min-height: 20px;

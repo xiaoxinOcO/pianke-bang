@@ -135,6 +135,7 @@ public class ChatService {
         }
 
         return contactNames.stream()
+                .filter(name -> !Boolean.TRUE.equals(csMap.get(name)))
                 .map(name -> new ChatContactDTO(
                         name,
                         avatarMap.getOrDefault(name, ""),

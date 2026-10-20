@@ -1,5 +1,6 @@
 <view class="page login-page">
   <view class="brand">
+    <view class="brand-glow"></view>
     <image class="brand-logo" src="/images/logo.png" mode="aspectFit" />
     <image class="brand-wordmark" src="/images/pianke-wordmark.png" mode="heightFix" />
     <text class="brand-sub">校园顺路代拿，省时又省心</text>
@@ -60,11 +61,6 @@
     </view>
 
     <button wx:else class="btn-primary submit-btn" disabled="{{submitting}}" bindtap="onLogin">{{submitting ? '登录中...' : '登录'}}</button>
-
-    <view wx:if="{{demoAccount}}" class="demo-hint" bindtap="fillDemoAccount">
-      <text class="demo-label">本地模式 · 无需后端</text>
-      <text class="demo-text">{{demoAccount.username}} / {{demoAccount.password}}</text>
-    </view>
   </view>
 
   <view wx:else class="card form-card">

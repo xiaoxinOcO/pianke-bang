@@ -42,12 +42,12 @@ function clearToken() {
 }
 
 /**
- * 主动退出：先抬升会话代数并锁住自动跳登录，再清本地凭证。
+ * 主动退出：先抬升会话代数，再清本地凭证。
+ * 旧请求返回 401 时会因代数变化被忽略，不再自动打开登录页。
  * 由 app.clearUser 调用；业务页不要单独先 clearToken 再 stop。
  */
 function beginLocalLogout() {
   bumpSessionEpoch()
-  authRedirectLocked = true
   clearToken()
 }
 
@@ -70,8 +70,6 @@ function buildLoginUrl(redirectUrl) {
 }
 
 function goLogin(redirectUrl) {
-  if (authRedirectLocked) return
-  authRedirectLocked = true
   let onLoginPage = false
   try {
     const pages = getCurrentPages()
@@ -79,10 +77,18 @@ function goLogin(redirectUrl) {
     onLoginPage = !!(cur && cur.route === 'pages/login/login')
   } catch { /* ignore */ }
   if (onLoginPage) return
+  if (authRedirectLocked) return
+  authRedirectLocked = true
+  const url = buildLoginUrl(redirectUrl)
   wx.navigateTo({
-    url: buildLoginUrl(redirectUrl),
+    url,
     fail() {
-      wx.redirectTo({ url: buildLoginUrl(redirectUrl) })
+      wx.redirectTo({
+        url,
+        fail() {
+          authRedirectLocked = false
+        }
+      })
     }
   })
 }

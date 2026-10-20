@@ -207,6 +207,10 @@ public class CouponCore {
                 if (t.getBannerImageUrl() != null && !t.getBannerImageUrl().isBlank()) {
                     row.put("bannerImageUrl", t.getBannerImageUrl());
                 }
+            } else if (c.getSnapshotName() != null && !c.getSnapshotName().isBlank()) {
+                row.put("name", c.getSnapshotName());
+            } else {
+                row.put("name", "已失效优惠券");
             }
             out.add(row);
         }
@@ -608,11 +612,7 @@ public class CouponCore {
         }
         CouponTemplate template = couponTemplateRepository.findById(templateId)
                 .orElseThrow(() -> new IllegalArgumentException("优惠券模板不存在"));
-        long owned = userCouponRepository.countByTemplateId(templateId);
-        if (owned > 0) {
-            throw new IllegalStateException(
-                    "该模板已有 " + owned + " 张用户券，无法删除。请改用「停用领取」。");
-        }
+        invalidateIssuedCoupons(template);
         // 先删兑换日志 → 兑换码 → 模板，避免外键挡住删除
         List<CouponRedeemCode> codes = couponRedeemCodeRepository.findByTemplateIdOrderByCreatedAtDesc(templateId);
         if (!codes.isEmpty()) {
@@ -623,6 +623,26 @@ public class CouponCore {
             couponRedeemCodeRepository.deleteAll(codes);
         }
         couponTemplateRepository.delete(template);
+    }
+
+    /** 未使用、占用中的券改为已过期，避免删模板后仍能抵扣。已使用的券只保留名称快照。 */
+    private void invalidateIssuedCoupons(CouponTemplate template) {
+        List<UserCoupon> issued = userCouponRepository.findByTemplateId(template.getId());
+        if (issued.isEmpty()) {
+            return;
+        }
+        String name = template.getName() == null ? "已失效优惠券" : template.getName().trim();
+        LocalDateTime now = LocalDateTime.now();
+        for (UserCoupon coupon : issued) {
+            coupon.setSnapshotName(name);
+            if (coupon.getStatus() == UserCouponStatus.UNUSED || coupon.getStatus() == UserCouponStatus.LOCKED) {
+                coupon.setStatus(UserCouponStatus.EXPIRED);
+                coupon.setExpireAt(now);
+                coupon.setUsedAt(null);
+                coupon.setUsedTaskId(null);
+            }
+        }
+        userCouponRepository.saveAll(issued);
     }
 
     private String formatTemplateBrief(CouponTemplate t) {

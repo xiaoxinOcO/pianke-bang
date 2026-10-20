@@ -1,7 +1,7 @@
 const walletService = require('../../services/wallet')
 const authService = require('../../services/auth')
 const { useLoginGuard, checkLoginGuard, getUser, setUser } = require('../../utils/auth')
-const { formatMoney, formatDateTime } = require('../../utils/format')
+const { formatMoney, formatDateTime, walletTypeLabel } = require('../../utils/format')
 
 function showNeedRiderWithdrawModal() {
   wx.showModal({
@@ -62,6 +62,7 @@ Page({
       const overview = res.overview || res
       const transactions = (res.transactions || []).map(t => ({
         ...t,
+        typeLabel: t.typeLabel || walletTypeLabel(t.type),
         amountText: formatMoney(t.amount),
         timeText: formatDateTime(t.createdAt)
       }))

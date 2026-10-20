@@ -30,6 +30,11 @@ Page({
       this.setData({
         activities: Array.isArray(rows) ? rows : []
       })
+      if (this.data.focus) {
+        wx.nextTick(() => {
+          wx.pageScrollTo({ selector: '.act-card.focus', duration: 280 })
+        })
+      }
     } catch (e) {
       wx.showToast({ title: e.message || '加载失败', icon: 'none' })
     }
@@ -39,8 +44,15 @@ Page({
     this.setData({ redeemCode: e.detail.value || '' })
   },
 
+  couponPagePath() {
+    const focus = this.data.focus
+    return focus
+      ? `/pages/coupon-center/coupon-center?focus=${encodeURIComponent(focus)}`
+      : '/pages/coupon-center/coupon-center'
+  },
+
   async onClaimTemplate(e) {
-    if (!requireLogin()) return
+    if (!requireLogin(this.couponPagePath())) return
     const id = e.currentTarget.dataset.id
     if (!id || this.data.claimingId) return
     this.setData({ claimingId: String(id) })
@@ -57,7 +69,7 @@ Page({
   },
 
   async onRedeem() {
-    if (!requireLogin()) return
+    if (!requireLogin(this.couponPagePath())) return
     const code = (this.data.redeemCode || '').trim()
     if (!code) {
       wx.showToast({ title: '请输入兑换码', icon: 'none' })
@@ -77,7 +89,7 @@ Page({
   },
 
   goMineCoupons() {
-    if (!requireLogin()) return
+    if (!requireLogin('/pages/coupons/coupons')) return
     wx.navigateTo({ url: '/pages/coupons/coupons' })
   }
 })

@@ -21,6 +21,8 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
 
     long countByTemplateId(Long templateId);
 
+    List<UserCoupon> findByTemplateId(Long templateId);
+
     Optional<UserCoupon> findByUsedTaskId(Long usedTaskId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

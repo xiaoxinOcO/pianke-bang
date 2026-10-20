@@ -16,6 +16,7 @@
     "pages/notices/notices",
     "pages/system-notice/system-notice",
     "pages/feedback/feedback",
+    "pages/support/support",
     "pages/rider-apply/rider-apply"
   ],
   "window": {

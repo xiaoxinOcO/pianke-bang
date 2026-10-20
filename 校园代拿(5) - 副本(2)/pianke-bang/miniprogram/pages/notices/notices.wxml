@@ -2,19 +2,30 @@
 
   <block wx:if="{{notices.length > 0}}">
 
-    <view wx:for="{{notices}}" wx:key="id" class="notice-card card">
+    <view
+      wx:for="{{notices}}"
+      wx:key="id"
+      class="notice-card card"
+      data-id="{{item.id}}"
+      bindtap="onNoticeTap"
+      hover-class="{{item.linkEnabled ? 'notice-card-hover' : ''}}"
+    >
 
       <view class="flex-between notice-header">
 
         <text class="notice-title">{{item.title}}</text>
 
-        <text wx:if="{{item.pinned}}" class="tag pin-tag">置顶</text>
+        <view class="notice-tags">
+          <text wx:if="{{item.pinned}}" class="tag pin-tag">置顶</text>
+          <text wx:if="{{item.linkEnabled}}" class="tag link-tag">链接</text>
+        </view>
 
       </view>
 
       <text class="notice-content">{{item.content}}</text>
 
       <text class="subtext notice-time">{{item.timeText}}</text>
+      <text wx:if="{{item.linkEnabled}}" class="subtext notice-link-hint">点击可跳转 ›</text>
 
     </view>
 
